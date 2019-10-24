@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "parent_id": null,
+      "category_name": "Basic Stuff"
+    },
+    {
+      "id": 1,
+      "parent_id": null,
+      "category_name": "Stances"
+    },
+    {
+      "id": 6,
+      "parent_id": null,
+      "category_name": "Blocks"
+    },
+    {
+      "id": 2,
+      "parent_id": null,
+      "category_name": "One-Steps"
+    },
+    {
+      "id": 3,
+      "parent_id": null,
+      "category_name": "Forms"
+    },
+    {
+      "id": 4,
+      "parent_id": 0,
+      "category_name": "Basic Stuff Subcategory 1"
+    },
+    {
+      "id": 5,
+      "parent_id": 1,
+      "category_name": "Stances Subcategory"
+    },
+    {
+      "id": 7,
+      "parent_id": 0,
+      "category_name": "Basic Stuff Subcategory 2"
+    }
+  ]
+}
