@@ -1,7 +1,7 @@
 {
   "content": [
     {
-      "id": 0,
+      "id": 1,
       "parent_id": 1,
       "title": "Stance 1",
       "video": "https://www.youtube.com/watch?v=y5LLshPJxlY",
@@ -11,8 +11,8 @@
       "desc": "This is a video of Ed breaking concrete"
     },
     {
-      "id": 1,
-      "parent_id": 0,
+      "id": 2,
+      "parent_id": 8,
       "title": "How To Tie Your Belt",
       "video": "https://www.youtube.com/watch?v=nCnu_mVHg9I",
       "audio": null,
@@ -21,7 +21,7 @@
       "desc": "Video describing how to tie your belt for Tae Kwon Do"
     },
     {
-      "id": 2,
+      "id": 3,
       "parent_id": 1,
       "title": "Stance 2",
       "video": "https://www.youtube.com/watch?v=eLNFcAtHKuE",
