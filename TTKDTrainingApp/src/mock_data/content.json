@@ -2,7 +2,7 @@
   "content": [
     {
       "id": 1,
-      "parent_id": 2,
+      "category_id": 2,
       "title": "Stance 1",
       "video": "https://www.youtube.com/watch?v=y5LLshPJxlY",
       "audio": null,
@@ -12,7 +12,7 @@
     },
     {
       "id": 2,
-      "parent_id": 1,
+      "category_id": 1,
       "title": "How To Tie Your Belt",
       "video": "https://www.youtube.com/watch?v=nCnu_mVHg9I",
       "audio": null,
@@ -22,7 +22,7 @@
     },
     {
       "id": 3,
-      "parent_id": 2,
+      "category_id": 2,
       "title": "Stance 2",
       "video": "https://www.youtube.com/watch?v=eLNFcAtHKuE",
       "audio": null,
