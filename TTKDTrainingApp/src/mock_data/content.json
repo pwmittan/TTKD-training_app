@@ -4,31 +4,28 @@
       "id": 1,
       "category_id": 2,
       "title": "Stance 1",
-      "video": "https://www.youtube.com/watch?v=y5LLshPJxlY",
-      "audio": null,
+      "video_uri": "https://www.youtube.com/watch?v=y5LLshPJxlY",
+      "audio_uri": null,
       "steps": null,
-      "length": null,
-      "desc": "This is a video of Ed breaking concrete"
+      "description": "This is a video of Ed breaking concrete"
     },
     {
       "id": 2,
       "category_id": 1,
       "title": "How To Tie Your Belt",
-      "video": "https://www.youtube.com/watch?v=nCnu_mVHg9I",
-      "audio": null,
+      "video_uri": "https://www.youtube.com/watch?v=nCnu_mVHg9I",
+      "audio_uri": null,
       "steps": null,
-      "length": null,
-      "desc": "Video describing how to tie your belt for Tae Kwon Do"
+      "description": "Video describing how to tie your belt for Tae Kwon Do"
     },
     {
       "id": 3,
       "category_id": 2,
       "title": "Stance 2",
-      "video": "https://www.youtube.com/watch?v=eLNFcAtHKuE",
-      "audio": null,
+      "video_uri": "https://www.youtube.com/watch?v=eLNFcAtHKuE",
+      "audio_uri": null,
       "steps": null,
-      "length": null,
-      "desc": "This is a video of Ed breaking 6 boards with a Reverse Punch"
+      "description": "This is a video of Ed breaking 6 boards with a Reverse Punch"
     }
   ]
 }
