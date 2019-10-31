@@ -6,21 +6,26 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
+import Categories from './Categories';
+
 const HomeScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>This is the placeholder HomeScreen</Text>
+    <View>
+      <View style={styles.title}>
+        <Text style={styles.titleText}>TTKD Home</Text>
+      </View>
+      <Categories />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  title: {
     alignItems: 'center',
-    justifyContent: 'center',
+    borderBottomWidth: 1,
   },
   titleText: {
-    fontSize: 20,
+    fontSize: 32,
   },
 });
 
