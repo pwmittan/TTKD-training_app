@@ -3,18 +3,27 @@
     Will be either repurposed or deleted as development starts
 */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 
 import Categories from './Categories';
+import {getCategory, getCategories} from '../utilities/categories.js';
 
 const HomeScreen = () => {
+  const [categoryId] = useState(null);
+
+  const renderTitle = (
+    <View style={styles.title}>
+      <Text style={styles.titleText}>
+        {categoryId ? getCategory.category_name : 'TTKD Home'}
+      </Text>
+    </View>
+  );
+
   return (
     <View>
-      <View style={styles.title}>
-        <Text style={styles.titleText}>TTKD Home</Text>
-      </View>
-      <Categories />
+      {renderTitle}
+      <Categories categories={getCategories(categoryId)} />
     </View>
   );
 };

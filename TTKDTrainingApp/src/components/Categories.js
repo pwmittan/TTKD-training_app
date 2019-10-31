@@ -1,9 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import {View, Text, FlatList, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import {getCategories} from '../utilities/categories.js';
 
 const CategoryItem = ({categoryName}) => {
   return (
@@ -14,8 +12,8 @@ const CategoryItem = ({categoryName}) => {
   );
 };
 
-const Categories = () => {
-  const [categories] = useState(getCategories());
+const Categories = props => {
+  const {categories} = props;
 
   return (
     <FlatList
