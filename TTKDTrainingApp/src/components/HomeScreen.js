@@ -22,7 +22,7 @@ const HomeScreen = () => {
           onPress={() => setCategoryId(category.parent_id)}>
           <Icon
             name="angle-left"
-            size={15}
+            size={16}
             backgroundColor={null}
             onPress={() => setCategoryId(category.parent_id)}
           />
@@ -54,14 +54,14 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   backButtonContainer: {
-    paddingLeft: 10,
-    height: 20,
+    paddingLeft: 8,
+    height: 24,
   },
   backButton: {
     flexDirection: 'row',
   },
   title: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     alignItems: 'center',
     borderBottomWidth: 1,
   },
