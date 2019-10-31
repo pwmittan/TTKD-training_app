@@ -4,32 +4,64 @@
 */
 
 import React, {useState} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Categories from './Categories';
 import {getCategory, getCategories} from '../utilities/categories.js';
 
 const HomeScreen = () => {
-  const [categoryId] = useState(null);
+  const [categoryId, setCategoryId] = useState(null);
+  const category = getCategory(categoryId);
+
+  const renderBackButton = (
+    <View style={styles.backButtonContainer}>
+      {category && (
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setCategoryId(category.parent_id)}>
+          <Icon
+            name="angle-left"
+            size={15}
+            backgroundColor={null}
+            onPress={() => setCategoryId(category.parent_id)}
+          />
+          <Text>{' Back'}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 
   const renderTitle = (
     <View style={styles.title}>
       <Text style={styles.titleText}>
-        {categoryId ? getCategory.category_name : 'TTKD Home'}
+        {categoryId ? category.category_name : 'TTKD Home'}
       </Text>
     </View>
   );
 
   return (
     <View>
+      {renderBackButton}
       {renderTitle}
-      <Categories categories={getCategories(categoryId)} />
+      <Categories
+        categories={getCategories(categoryId)}
+        setCategoryId={setCategoryId}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  backButtonContainer: {
+    paddingLeft: 10,
+    height: 20,
+  },
+  backButton: {
+    flexDirection: 'row',
+  },
   title: {
+    paddingHorizontal: 10,
     alignItems: 'center',
     borderBottomWidth: 1,
   },
