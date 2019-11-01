@@ -22,11 +22,12 @@ const HomeScreen = () => {
           onPress={() => setCategoryId(category.parent_id)}>
           <Icon
             name="angle-left"
-            size={16}
+            size={20}
+            style={styles.backButtonIcon}
             backgroundColor={null}
             onPress={() => setCategoryId(category.parent_id)}
           />
-          <Text>{' Back'}</Text>
+          <Text style={styles.backButtonText}>{' Back'}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -55,18 +56,21 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   backButtonContainer: {
     paddingLeft: 8,
-    height: 24,
+    height: 20,
   },
   backButton: {
     flexDirection: 'row',
   },
+  backButtonText: {
+    fontSize: 16,
+  },
   title: {
     paddingHorizontal: 12,
-    alignItems: 'center',
     borderBottomWidth: 1,
   },
   titleText: {
     fontSize: 32,
+    textAlign: 'center',
   },
 });
 
