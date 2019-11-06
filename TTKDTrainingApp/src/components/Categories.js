@@ -20,7 +20,7 @@ const Categories = props => {
   return (
     <FlatList
       data={categories}
-      keyExtractor={category => category.id}
+      keyExtractor={category => `${category.id}`}
       renderItem={({item}) => renderCategoryItem(item)}
       ItemSeparatorComponent={() => <View style={styles.categorySeparator} />}
     />
