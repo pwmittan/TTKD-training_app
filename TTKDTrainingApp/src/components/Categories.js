@@ -1,43 +1,37 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-import {View, Text, FlatList, StyleSheet} from 'react-native';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {getCategories} from '../utilities/categories.js';
+const Categories = props => {
+  const {categories, setCategoryId} = props;
 
-const CategoryItem = ({categoryName}) => {
-  return (
-    <View style={styles.categoryItem}>
-      <Text style={styles.categoryText}>{categoryName}</Text>
-      <Icon name="arrow-right" />
-    </View>
-  );
-};
-
-const Categories = () => {
-  const [categories] = useState(getCategories());
+  const renderCategoryItem = category => {
+    return (
+      <TouchableOpacity onPress={() => setCategoryId(category.id)}>
+        <View style={styles.categoryItem}>
+          <Text style={styles.categoryText}>{category.category_name}</Text>
+          <Icon name="angle-right" size={24} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <FlatList
       data={categories}
-      keyExtractor={category => category.id}
-      renderItem={({item}) => {
-        return <CategoryItem categoryName={item.category_name} />;
-      }}
+      keyExtractor={category => `${category.id}`}
+      renderItem={({item}) => renderCategoryItem(item)}
       ItemSeparatorComponent={() => <View style={styles.categorySeparator} />}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   categoryItem: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
+    padding: 12,
   },
   categoryText: {fontSize: 24},
   categorySeparator: {
