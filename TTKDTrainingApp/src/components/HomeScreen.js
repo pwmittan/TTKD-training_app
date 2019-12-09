@@ -4,7 +4,7 @@
 */
 
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Categories from './Categories';
@@ -38,6 +38,10 @@ const HomeScreen = () => {
       <Text style={styles.titleText}>
         {categoryId ? category.category_name : 'TTKD Home'}
       </Text>
+      <Button
+        title="Go to Video"
+        onPress={() => navigate('RecordVideo')}
+      />
     </View>
   );
 

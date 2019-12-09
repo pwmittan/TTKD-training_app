@@ -2,6 +2,7 @@ import React from 'react';
 import {SafeAreaView, StyleSheet, ScrollView, StatusBar} from 'react-native';
 
 import HomeScreen from './src/components/HomeScreen';
+import RecordVideo from './src/components/RecordVideo';
 
 const App: () => React$Node = () => {
   return (
@@ -9,6 +10,7 @@ const App: () => React$Node = () => {
       <StatusBar barStyle="dark-content" />
       <SafeAreaView>
         <HomeScreen />
+        <RecordVideo />
       </SafeAreaView>
     </React.Fragment>
   );
