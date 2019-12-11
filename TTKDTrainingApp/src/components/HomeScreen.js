@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Categories from './Categories';
 import {getCategory, getCategories} from '../utilities/categories.js';
 
-const HomeScreen = () => {
+const HomeScreen = props => {
   const [categoryId, setCategoryId] = useState(null);
   const category = getCategory(categoryId);
 
@@ -32,7 +32,8 @@ const HomeScreen = () => {
       )}
     </View>
   );
-
+  
+  
   const renderTitle = (
     <View style={styles.title}>
       <Text style={styles.titleText}>
@@ -40,7 +41,7 @@ const HomeScreen = () => {
       </Text>
       <Button
         title="Go to Video"
-        onPress={() => navigate('RecordVideo')}
+        onPress={() => props.navigation.dispatch('RecordVideo')}
       />
     </View>
   );
