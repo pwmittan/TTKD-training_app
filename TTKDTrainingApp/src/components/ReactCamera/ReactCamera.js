@@ -74,16 +74,9 @@ class ReactCamera extends PureComponent {
   async startRecording() {
     this.setState({recording: true});
     // default to mp4 for android as codec is not set
-    const {uri, codec = 'mp4'} = await this.camera.recordAsync();
+    const video = await this.camera.recordAsync();
     this.setState({recording: false, processing: true});
-    const type = `video/${codec}`;
-
-    const data = new FormData();
-    data.append('video', {
-      name: 'mobile-video-upload',
-      type,
-      uri,
-    });
+    this.props.addVideo(video);
 
     this.setState({processing: false});
   }
