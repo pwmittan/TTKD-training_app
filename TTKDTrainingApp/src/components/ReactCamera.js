@@ -21,7 +21,7 @@ class ReactCamera extends PureComponent {
       <TouchableOpacity
         onPress={this.startRecording.bind(this)}
         style={styles.capture}>
-        <Text style={{fontSize: 14}}> RECORD </Text>
+        <Text style={styles.text}> RECORD </Text>
       </TouchableOpacity>
     );
 
@@ -30,7 +30,7 @@ class ReactCamera extends PureComponent {
         <TouchableOpacity
           onPress={this.stopRecording.bind(this)}
           style={styles.capture}>
-          <Text style={{fontSize: 14}}> STOP </Text>
+          <Text style={styles.text}> STOP </Text>
         </TouchableOpacity>
       );
     }
@@ -65,10 +65,7 @@ class ReactCamera extends PureComponent {
               buttonNegative: 'Cancel',
             }}
           />
-          <View
-            style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
-            {button}
-          </View>
+          <View style={styles.button}>{button}</View>
         </View>
       )
     );
@@ -116,5 +113,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignSelf: 'center',
     margin: 20,
+  },
+  button: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 14,
   },
 });
