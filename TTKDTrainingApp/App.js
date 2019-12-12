@@ -7,12 +7,12 @@ import {Provider} from 'react-redux';
 
 import store from './src/redux/store';
 import HomeScreen from './src/components/HomeScreen';
-import ReactCamera from './src/components/ReactCamera';
+import ReactCameraConnector from './src/components/ReactCamera';
 
 const AppNavigator = createStackNavigator(
   {
     HomeScreen: HomeScreen,
-    ReactCamera: ReactCamera,
+    ReactCamera: ReactCameraConnector,
   },
   {
     initialRouteName: 'HomeScreen',
