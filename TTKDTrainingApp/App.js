@@ -13,7 +13,7 @@ const AppNavigator = createStackNavigator(
     ReactCamera: ReactCamera,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'HomeScreen',
   },
 );
 
