@@ -1,4 +1,4 @@
-const ADD_VIDEO = 'ADD_VIDEO';
+import {ADD_VIDEO} from '../actionTypes';
 
 const initialState = {
   videos: [],
@@ -7,8 +7,9 @@ const initialState = {
 const reactCamera = (state = initialState, action) => {
   switch (action.type) {
     case ADD_VIDEO: {
+      const video = action.payload;
       return {
-        videos: [action.payload.video, ...state.videos],
+        videos: [video, ...state.videos],
       };
     }
     default: {
