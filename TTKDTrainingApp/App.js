@@ -5,20 +5,16 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 import HomeScreen from './src/components/HomeScreen';
+import ReactCamera from './src/components/ReactCamera';
 
-// const App: () => React$Node = () => {
-//   return (
-//     <React.Fragment>
-//       <StatusBar barStyle="dark-content" />
-//       <SafeAreaView>
-//         <AppContainer />
-//       </SafeAreaView>
-//     </React.Fragment>
-//   );
-// };
-
-const AppNavigator = createStackNavigator({
-  Home: HomeScreen,
-});
+const AppNavigator = createStackNavigator(
+  {
+    HomeScreen: HomeScreen,
+    ReactCamera: ReactCamera,
+  },
+  {
+    initialRouteName: 'Home',
+  },
+);
 
 export default createAppContainer(AppNavigator);

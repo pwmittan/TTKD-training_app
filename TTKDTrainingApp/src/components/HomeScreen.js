@@ -4,13 +4,13 @@
 */
 
 import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Categories from './Categories';
 import {getCategory, getCategories} from '../utilities/categories.js';
 
-const HomeScreen = () => {
+const HomeScreen = props => {
   const [categoryId, setCategoryId] = useState(null);
   const category = getCategory(categoryId);
 
@@ -48,6 +48,12 @@ const HomeScreen = () => {
       <Categories
         categories={getCategories(categoryId)}
         setCategoryId={setCategoryId}
+      />
+      <Button
+        title="Start Recording"
+        onPress={() => {
+          props.navigation.navigate('ReactCamera');
+        }}
       />
     </View>
   );
