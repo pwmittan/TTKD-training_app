@@ -5,9 +5,9 @@
 	<!--React Native Camera Permissions-->
 
 	<key>NSCameraUsageDescription</key>
-	<string>TTKD would like access to the Camera</string>
+	<string>TTKD would like to access the Camera</string>
 
-	Required with iOS 11 and higher: include this only if you are planning to use the camera roll
+	<!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll -->
 	<!-- <key>NSPhotoLibraryAddUsageDescription</key>
 	<string>TTKD would like access to the Camera Roll</string> -->
 
@@ -16,8 +16,8 @@
 	<string>TTKD would like access to the Camera Roll</string> -->
 
 	<!-- Include this only if you are planning to use the microphone for video recording -->
-	<key>NSMicrophoneUsageDescription</key>
-	<string>TTKD would like access to the microphone</string>
+	<!-- <key>NSMicrophoneUsageDescription</key>
+	<string>TTKD would like access to the microphone</string> -->
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>

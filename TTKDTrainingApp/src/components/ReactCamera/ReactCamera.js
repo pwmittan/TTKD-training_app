@@ -54,16 +54,16 @@ class ReactCamera extends PureComponent {
             flashMode={RNCamera.Constants.FlashMode.on}
             androidCameraPermissionOptions={{
               title: 'Permission to use camera',
-              message: 'We need your permission to use your camera',
+              message: 'TTKD would like to access the Camera',
               buttonPositive: 'Ok',
               buttonNegative: 'Cancel',
             }}
-            androidRecordAudioPermissionOptions={{
-              title: 'Permission to use audio recording',
-              message: 'We need your permission to use your audio',
-              buttonPositive: 'Ok',
-              buttonNegative: 'Cancel',
-            }}
+            // androidRecordAudioPermissionOptions={{
+            //   title: 'Permission to use audio recording',
+            //   message: 'We need your permission to use your audio',
+            //   buttonPositive: 'Ok',
+            //   buttonNegative: 'Cancel',
+            // }}
           />
           <View style={styles.button}>{button}</View>
         </View>
