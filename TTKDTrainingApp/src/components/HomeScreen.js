@@ -4,14 +4,7 @@
 */
 
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Button,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Categories from './Categories';
@@ -63,7 +56,7 @@ const HomeScreen = props => {
           props.navigation.navigate('ReactCamera');
         }}
       />
-      <VideoThumbnailConnector style={{flex: 1}} />
+      <VideoThumbnailConnector navigation={props.navigation} />
     </View>
   );
 };
