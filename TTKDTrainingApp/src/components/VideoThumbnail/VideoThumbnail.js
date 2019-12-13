@@ -1,17 +1,33 @@
-import {connect} from 'react-redux';
-import VideoThumbnail from './VideoThumbnail';
+import React, {PureComponent} from 'react';
+import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
 
-import {getVideos} from '../../redux/selectors';
+class VideoThumbnail extends PureComponent {
+  render() {
+    return (
+      <View>
+        {this.props.videos.map(video => (
+          <TouchableOpacity
+            key={video.uri}
+            onPress={() => {
+              this.props.navigation.navigate('VideoWithControls', {
+                video: video.uri,
+              });
+            }}>
+            <View>
+              <Image source={{uri: video.uri}} style={styles.thumbnail} />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  }
+}
 
-const mapStateToProps = state => {
-  const videos = getVideos(state);
-  return {
-    videos,
-  };
-};
+const styles = StyleSheet.create({
+  thumbnail: {
+    height: 75,
+    width: 75,
+  },
+});
 
-// eslint-disable-next-line prettier/prettier
-export const VideoThumbnailConnector = connect(
-  mapStateToProps,
-  null,
-)(VideoThumbnail);
+export default VideoThumbnail;

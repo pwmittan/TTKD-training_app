@@ -1,25 +1,17 @@
-import React, {PureComponent} from 'react';
-import {StyleSheet, Image, View} from 'react-native';
+import {connect} from 'react-redux';
+import VideoThumbnail from './VideoThumbnail';
 
-class VideoThumbnail extends PureComponent {
-  render() {
-    return (
-      <View>
-        {this.props.videos.map(video => (
-          <View key={video.uri}>
-            <Image source={{uri: video.uri}} style={styles.thumbnail} />
-          </View>
-        ))}
-      </View>
-    );
-  }
-}
+import {getVideos} from '../../redux/selectors';
 
-const styles = StyleSheet.create({
-  thumbnail: {
-    height: 75,
-    width: 75,
-  },
-});
+const mapStateToProps = (state, ownProps) => {
+  const videos = getVideos(state);
+  return {
+    videos,
+  };
+};
 
-export default VideoThumbnail;
+// eslint-disable-next-line prettier/prettier
+export const VideoThumbnailConnector = connect(
+  mapStateToProps,
+  null,
+)(VideoThumbnail);
