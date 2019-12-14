@@ -3,7 +3,7 @@ import VideoThumbnail from './VideoThumbnail';
 
 import {getVideos} from '../../redux/selectors';
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
   const videos = getVideos(state);
   return {
     videos,

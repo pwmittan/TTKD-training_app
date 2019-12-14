@@ -4,11 +4,16 @@ import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Categories = props => {
-  const {categories, setCategoryId} = props;
+  const {categories, navigation} = props;
 
   const renderCategoryItem = category => {
     return (
-      <TouchableOpacity onPress={() => setCategoryId(category.id)}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.push('HomeScreen', {
+            categoryId: category.id,
+          })
+        }>
         <View style={styles.categoryItem}>
           <Text style={styles.categoryText}>{category.category_name}</Text>
           <Icon name="angle-right" size={24} />
