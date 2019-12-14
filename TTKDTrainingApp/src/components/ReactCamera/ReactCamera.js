@@ -51,7 +51,8 @@ class ReactCamera extends PureComponent {
             }}
             style={styles.preview}
             type={RNCamera.Constants.Type.back}
-            flashMode={RNCamera.Constants.FlashMode.on}
+            flashMode={RNCamera.Constants.FlashMode.off}
+            captureAudio={false}
             androidCameraPermissionOptions={{
               title: 'Permission to use camera',
               message: 'TTKD would like to access the Camera',
@@ -74,7 +75,9 @@ class ReactCamera extends PureComponent {
   async startRecording() {
     this.setState({recording: true});
     // default to mp4 for android as codec is not set
-    const video = await this.camera.recordAsync();
+    const video = await this.camera.recordAsync({
+      mute: true,
+    });
     this.setState({recording: false, processing: true});
     this.props.addVideo(video);
 
