@@ -5,13 +5,13 @@ import {createStackNavigator} from 'react-navigation-stack';
 import {Provider} from 'react-redux';
 
 import store from './src/redux/store';
-import HomeScreen from './src/components/HomeScreen';
+import HomeScreenConnector from './src/components/HomeScreen';
 import ReactCameraConnector from './src/components/ReactCamera';
 import VideoWithControls from './src/components/VideoWithControls';
 
 const AppNavigator = createStackNavigator(
   {
-    HomeScreen: HomeScreen,
+    HomeScreen: HomeScreenConnector,
     ReactCamera: ReactCameraConnector,
     VideoWithControls: VideoWithControls,
   },
