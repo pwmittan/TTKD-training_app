@@ -10,7 +10,7 @@ class VideoThumbnail extends PureComponent {
             key={video.uri}
             onPress={() => {
               this.props.navigation.navigate('VideoWithControls', {
-                video: video.uri,
+                video: video,
               });
             }}>
             <View>
