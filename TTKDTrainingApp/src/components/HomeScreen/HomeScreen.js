@@ -19,22 +19,6 @@ class HomeScreen extends Component {
     const {category, categoryId} = this.state;
     const {navigation, subCategories} = this.props;
 
-    const renderBackButton = (
-      <View style={styles.backButtonContainer}>
-        {category && (
-          <TouchableOpacity style={styles.backButton} onPress={null}>
-            <Icon
-              name="angle-left"
-              size={20}
-              style={styles.backButtonIcon}
-              backgroundColor={null}
-            />
-            <Text style={styles.backButtonText}>{' Back'}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-
     const renderTitle = (
       <View style={styles.title}>
         <Text style={styles.titleText}>
@@ -45,7 +29,6 @@ class HomeScreen extends Component {
 
     return (
       <View>
-        {renderBackButton}
         {renderTitle}
         <Categories
           navigation={navigation}
