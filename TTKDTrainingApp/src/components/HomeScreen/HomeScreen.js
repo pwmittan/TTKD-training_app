@@ -4,20 +4,21 @@
 */
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Button} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {StyleSheet, View, Text, Button} from 'react-native';
 
 import Categories from '../Categories';
 import VideoThumbnailConnector from '../VideoThumbnail';
 
 class HomeScreen extends Component {
-  state = {
-    categoryId: null,
-    category: this.props.category,
-  };
   render() {
-    const {category, categoryId} = this.state;
-    const {navigation, subCategories} = this.props;
+    const {
+      navigation,
+      category,
+      categoryId,
+      subCategories,
+      content,
+    } = this.props;
+    console.log('TCL: HomeScreen -> render -> content', content);
 
     const renderTitle = (
       <View style={styles.title}>
@@ -30,11 +31,7 @@ class HomeScreen extends Component {
     return (
       <View>
         {renderTitle}
-        <Categories
-          navigation={navigation}
-          categories={subCategories}
-          setCategoryId={null}
-        />
+        <Categories navigation={navigation} categories={subCategories} />
         <Button
           title="Start Recording"
           onPress={() => {

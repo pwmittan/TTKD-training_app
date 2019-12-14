@@ -9,6 +9,7 @@ const mapStateToProps = (state, ownProps) => {
   const subCategories = getSubCategories(state, categoryId);
   const category = getCategory(state, categoryId);
   return {
+    categoryId,
     subCategories,
     category,
   };
