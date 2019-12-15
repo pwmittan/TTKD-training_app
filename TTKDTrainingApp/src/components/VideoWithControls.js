@@ -66,16 +66,22 @@ export default class VideoWithControls extends Component {
     const {width} = Dimensions.get('window');
     const height = width * 0.5265;
     const {navigation} = this.props;
-    const video = navigation.getParam('video', '');
+    const video = navigation
+      ? navigation.getParam('video', '')
+      : this.props.video;
 
     return (
       <View style={styles.container}>
         <View style={{height: height + 48, width: '100%'}}>
           <TouchableWithoutFeedback onPress={this.handlePlayPausePress}>
             <Video
-              source={{
-                uri: video.uri,
-              }}
+              source={
+                video.uri
+                  ? {
+                      uri: video.uri,
+                    }
+                  : video
+              }
               paused={this.state.paused}
               rate={this.state.rate}
               resizeMode="contain"
