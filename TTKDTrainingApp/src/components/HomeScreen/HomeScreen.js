@@ -5,8 +5,9 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Button, FlatList} from 'react-native';
+import {isEmpty} from 'lodash';
 
-import Categories from '../Categories';
+import Category from '../Category';
 import VideoThumbnailConnector from '../VideoThumbnail';
 import ContentCard from '../ContentCard';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -32,28 +33,40 @@ class HomeScreen extends Component {
     return (
       <View>
         {renderTitle}
-        <ScrollView>
-          <Categories navigation={navigation} categories={subCategories} />
 
-          <FlatList
-            data={categoryContent}
-            keyExtractor={content => `${content.id}`}
-            renderItem={({item}) => (
-              <ContentCard navigation={navigation} content={item} />
-            )}
-            ItemSeparatorComponent={() => (
-              <View style={styles.categorySeparator} />
-            )}
-          />
-
-          {!categoryId && (
-            <Button
-              title="Start Recording"
-              onPress={() => {
-                navigation.navigate('ReactCamera');
-              }}
-            />
+        <FlatList
+          data={subCategories}
+          keyExtractor={subCategory => `${subCategory.id}`}
+          renderItem={({item}) => (
+            <Category navigation={navigation} category={item} />
           )}
+          ItemSeparatorComponent={() => (
+            <View style={styles.listItemSeparator} />
+          )}
+        />
+        {!isEmpty(subCategories) && !isEmpty(categoryContent) && (
+          <View style={styles.listItemSeparator} />
+        )}
+        <FlatList
+          data={categoryContent}
+          keyExtractor={content => `${content.id}`}
+          renderItem={({item}) => (
+            <ContentCard navigation={navigation} content={item} />
+          )}
+          ItemSeparatorComponent={() => (
+            <View style={styles.listItemSeparator} />
+          )}
+        />
+
+        {!categoryId && (
+          <Button
+            title="Start Recording"
+            onPress={() => {
+              navigation.navigate('ReactCamera');
+            }}
+          />
+        )}
+        <ScrollView horizontal={true}>
           <VideoThumbnailConnector navigation={navigation} />
         </ScrollView>
       </View>
@@ -80,7 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     textAlign: 'center',
   },
-  categorySeparator: {
+  listItemSeparator: {
     borderBottomWidth: 1,
   },
 });
