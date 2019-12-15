@@ -4,10 +4,12 @@
 */
 
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Button} from 'react-native';
+import {StyleSheet, View, Text, Button, FlatList} from 'react-native';
 
 import Categories from '../Categories';
 import VideoThumbnailConnector from '../VideoThumbnail';
+import ContentCard from '../ContentCard';
+import {ScrollView} from 'react-native-gesture-handler';
 
 class HomeScreen extends Component {
   render() {
@@ -16,9 +18,8 @@ class HomeScreen extends Component {
       category,
       categoryId,
       subCategories,
-      content,
+      categoryContent,
     } = this.props;
-    console.log('TCL: HomeScreen -> render -> content', content);
 
     const renderTitle = (
       <View style={styles.title}>
@@ -31,14 +32,30 @@ class HomeScreen extends Component {
     return (
       <View>
         {renderTitle}
-        <Categories navigation={navigation} categories={subCategories} />
-        <Button
-          title="Start Recording"
-          onPress={() => {
-            navigation.navigate('ReactCamera');
-          }}
-        />
-        <VideoThumbnailConnector navigation={navigation} />
+        <ScrollView>
+          <Categories navigation={navigation} categories={subCategories} />
+
+          <FlatList
+            data={categoryContent}
+            keyExtractor={content => `${content.id}`}
+            renderItem={({item}) => (
+              <ContentCard navigation={navigation} content={item} />
+            )}
+            ItemSeparatorComponent={() => (
+              <View style={styles.categorySeparator} />
+            )}
+          />
+
+          {!categoryId && (
+            <Button
+              title="Start Recording"
+              onPress={() => {
+                navigation.navigate('ReactCamera');
+              }}
+            />
+          )}
+          <VideoThumbnailConnector navigation={navigation} />
+        </ScrollView>
       </View>
     );
   }
@@ -62,6 +79,9 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 32,
     textAlign: 'center',
+  },
+  categorySeparator: {
+    borderBottomWidth: 1,
   },
 });
 
