@@ -1,8 +1,3 @@
-/*
-    Placeholder screen to allow for creation of components directory
-    Will be either repurposed or deleted as development starts
-*/
-
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Button, FlatList} from 'react-native';
 import {isEmpty} from 'lodash';
@@ -75,16 +70,6 @@ class HomeScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  backButtonContainer: {
-    paddingLeft: 8,
-    height: 20,
-  },
-  backButton: {
-    flexDirection: 'row',
-  },
-  backButtonText: {
-    fontSize: 16,
-  },
   title: {
     paddingHorizontal: 12,
     borderBottomWidth: 1,
