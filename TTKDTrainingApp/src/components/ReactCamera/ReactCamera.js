@@ -16,6 +16,7 @@ class ReactCamera extends PureComponent {
   };
   render() {
     const {recording, processing} = this.state;
+    const {isFocused} = this.props;
 
     let button = (
       <TouchableOpacity
@@ -43,7 +44,7 @@ class ReactCamera extends PureComponent {
       );
     }
     return (
-      this.props.isFocused && (
+      isFocused && (
         <View style={styles.container}>
           <RNCamera
             ref={ref => {
@@ -79,7 +80,10 @@ class ReactCamera extends PureComponent {
       mute: true,
     });
     this.setState({recording: false, processing: true});
-    this.props.addVideo(video);
+    this.props.addVideo({
+      ...video,
+      contentId: this.props.navigation.getParam('contentId'),
+    });
 
     this.setState({processing: false});
   }

@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, Button, ScrollView, StyleSheet} from 'react-native';
 
 import VideoWithControls from './VideoWithControls';
+import VideoThumbnailConnector from './VideoThumbnail';
 
 const Content = props => {
   const {navigation} = props;
@@ -19,11 +20,27 @@ const Content = props => {
     </View>
   );
 
+  const recordButton = (
+    <Button
+      title="Start Recording"
+      onPress={() => {
+        navigation.navigate('ReactCamera', {contentId: content.id});
+      }}
+    />
+  );
+
   return (
     <View>
       {renderTitle}
       {renderDesc}
       <VideoWithControls video={content.video} />
+      {recordButton}
+      <ScrollView horizontal={true}>
+        <VideoThumbnailConnector
+          navigation={navigation}
+          contentId={content.id}
+        />
+      </ScrollView>
     </View>
   );
 };

@@ -1,7 +1,10 @@
 export const getReactCameraState = store => store.reactCamera;
 export const getHomeScreenState = store => store.homeScreen;
 
-export const getVideos = store => getReactCameraState(store).videos;
+export const getAllVideos = store => getReactCameraState(store).videos;
+
+export const getVideosForContent = (store, contentId) =>
+  getAllVideos(store).filter(video => video.contentId === contentId);
 
 const getAllCategories = store => getHomeScreenState(store).categories;
 const getAllContent = store => getHomeScreenState(store).content;

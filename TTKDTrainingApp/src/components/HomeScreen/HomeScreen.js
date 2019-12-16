@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Button, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList} from 'react-native';
 import {isEmpty} from 'lodash';
 
 import Category from '../Category';
-import VideoThumbnailConnector from '../VideoThumbnail';
 import ContentCard from '../ContentCard';
-import {ScrollView} from 'react-native-gesture-handler';
 
 class HomeScreen extends Component {
   render() {
@@ -52,18 +50,6 @@ class HomeScreen extends Component {
             <View style={styles.listItemSeparator} />
           )}
         />
-
-        {!categoryId && (
-          <Button
-            title="Start Recording"
-            onPress={() => {
-              navigation.navigate('ReactCamera');
-            }}
-          />
-        )}
-        <ScrollView horizontal={true}>
-          <VideoThumbnailConnector navigation={navigation} />
-        </ScrollView>
       </View>
     );
   }
