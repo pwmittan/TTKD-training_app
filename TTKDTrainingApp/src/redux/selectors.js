@@ -1,10 +1,11 @@
 export const getReactCameraState = store => store.reactCamera;
 export const getHomeScreenState = store => store.homeScreen;
 
-export const getAllVideos = store => getReactCameraState(store).videos;
+export const getAllRecordedVideos = store =>
+  getReactCameraState(store).recordedVideos;
 
-export const getVideosForContent = (store, contentId) =>
-  getAllVideos(store).filter(video => video.contentId === contentId);
+export const getRecordedVideosForContent = (store, contentId) =>
+  getAllRecordedVideos(store).filter(video => video.contentId === contentId);
 
 const getAllCategories = store => getHomeScreenState(store).categories;
 const getAllContent = store => getHomeScreenState(store).content;
@@ -17,3 +18,6 @@ export const getSubCategories = (store, parentId) =>
 
 export const getCategoryContent = (store, categoryId) =>
   getAllContent(store).filter(content => content.category_id === categoryId);
+
+export const getContentOwnVideo = (store, contentId) =>
+  getAllContent(store).find(content => content.id === contentId).video;

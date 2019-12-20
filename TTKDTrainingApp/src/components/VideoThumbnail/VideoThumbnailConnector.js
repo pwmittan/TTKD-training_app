@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import VideoThumbnail from './VideoThumbnail';
 
-import {getVideosForContent} from '../../redux/selectors';
+import {getRecordedVideosForContent} from '../../redux/selectors';
 
 const mapStateToProps = (state, ownProps) => {
-  const videos = getVideosForContent(state, ownProps.contentId);
+  const recordedVideos = getRecordedVideosForContent(state, ownProps.contentId);
   return {
-    videos,
+    recordedVideos,
   };
 };
 

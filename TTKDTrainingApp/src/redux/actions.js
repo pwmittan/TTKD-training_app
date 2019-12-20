@@ -1,8 +1,8 @@
-import {ADD_VIDEO} from './actionTypes';
+import {ADD_RECORDED_VIDEO} from './actionTypes';
 
-export const addVideo = video => {
+export const addRecordedVideo = video => {
   return {
-    type: ADD_VIDEO,
+    type: ADD_RECORDED_VIDEO,
     payload: video,
   };
 };

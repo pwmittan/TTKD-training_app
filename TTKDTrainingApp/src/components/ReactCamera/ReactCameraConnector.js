@@ -1,11 +1,11 @@
 import {connect} from 'react-redux';
 import ReactCamera from './ReactCamera';
 
-import {addVideo} from '../../redux/actions';
+import {addRecordedVideo} from '../../redux/actions';
 
 const mapDispatchToProps = dispatch => {
   return {
-    addVideo: video => dispatch(addVideo(video)),
+    addRecordedVideo: video => dispatch(addRecordedVideo(video)),
   };
 };
 

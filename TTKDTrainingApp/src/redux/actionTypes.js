@@ -1,1 +1,1 @@
-export const ADD_VIDEO = 'ADD_VIDEO';
+export const ADD_RECORDED_VIDEO = 'ADD_VIDEO';
