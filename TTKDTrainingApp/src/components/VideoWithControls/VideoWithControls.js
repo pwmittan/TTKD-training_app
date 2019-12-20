@@ -63,32 +63,45 @@ export default class VideoWithControls extends Component {
   };
 
   render() {
+    const {navigation, contentVideo} = this.props;
     const {width} = Dimensions.get('window');
-    const height = width * 0.5265;
-    const {navigation} = this.props;
+    const videoHeight = width * 0.5265;
+    const fullHeight = contentVideo ? videoHeight * 2 : videoHeight;
+
     const video = navigation ? navigation.getParam('video') : this.props.video;
+
+    const videoSource = video.uri ? {uri: video.uri} : video;
 
     return (
       <View style={styles.container}>
-        <View style={{height: height + 48, width: '100%'}}>
+        <View style={{height: fullHeight + 48, width: '100%'}}>
           <TouchableWithoutFeedback onPress={this.handlePlayPausePress}>
-            <Video
-              source={
-                video.uri
-                  ? {
-                      uri: video.uri,
-                    }
-                  : video
-              }
-              paused={this.state.paused}
-              rate={this.state.rate}
-              resizeMode="contain"
-              onLoad={this.handleLoad}
-              onProgress={this.handleProgress}
-              onEnd={this.handleEnd}
-              ref={ref => (this.player = ref)}
-              style={{height, width: '100%'}}
-            />
+            <View>
+              <Video
+                source={videoSource}
+                paused={this.state.paused}
+                rate={this.state.rate}
+                resizeMode="contain"
+                onLoad={this.handleLoad}
+                onProgress={this.handleProgress}
+                onEnd={this.handleEnd}
+                ref={ref => (this.player = ref)}
+                style={{height: videoHeight, width: '100%'}}
+              />
+              {contentVideo && (
+                <Video
+                  source={contentVideo}
+                  paused={this.state.paused}
+                  rate={this.state.rate}
+                  resizeMode="contain"
+                  onLoad={this.handleLoad}
+                  onProgress={this.handleProgress}
+                  onEnd={this.handleEnd}
+                  ref={ref => (this.player = ref)}
+                  style={{height: videoHeight, width: '100%'}}
+                />
+              )}
+            </View>
           </TouchableWithoutFeedback>
         </View>
         <View style={styles.controls}>
