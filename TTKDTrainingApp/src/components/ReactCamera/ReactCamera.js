@@ -82,7 +82,7 @@ class ReactCamera extends PureComponent {
     this.setState({recording: false, processing: true});
     this.props.addRecordedVideo({
       ...video,
-      contentId: this.props.navigation.getParam('contentId'),
+      contentId: this.props.contentId,
     });
 
     this.setState({processing: false});
