@@ -4,12 +4,18 @@ import VideoWithControls from './VideoWithControls';
 import {getContentOwnVideo} from '../../redux/selectors';
 
 const mapStateToProps = (state, ownProps) => {
-  const contentId = ownProps.navigation
-    ? ownProps.navigation.getParam('contentId')
-    : null;
+  const contentId =
+    ownProps.navigation && ownProps.navigation.getParam('contentId');
 
-  const contentVideo = contentId ? getContentOwnVideo(state, contentId) : null;
+  const contentVideo = contentId
+    ? getContentOwnVideo(state, contentId)
+    : ownProps.contentVideo;
+
+  const recordedVideo =
+    ownProps.navigation && ownProps.navigation.getParam('recordedVideo');
+
   return {
+    recordedVideo,
     contentVideo,
   };
 };

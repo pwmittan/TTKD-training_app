@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Button, ScrollView, StyleSheet} from 'react-native';
 
-import VideoWithControls from './VideoWithControls';
+import VideoWithControlsConnector from './VideoWithControls';
 import VideoThumbnailConnector from './VideoThumbnail';
 
 const Content = props => {
@@ -33,7 +33,7 @@ const Content = props => {
     <View>
       {renderTitle}
       {renderDesc}
-      <VideoWithControls video={content.video} />
+      <VideoWithControlsConnector contentVideo={content.video} />
       {recordButton}
       <ScrollView horizontal={true}>
         <VideoThumbnailConnector

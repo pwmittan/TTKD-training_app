@@ -5,17 +5,20 @@ class VideoThumbnail extends PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.recordedVideos.map(video => (
+        {this.props.recordedVideos.map(recordedVideo => (
           <TouchableOpacity
-            key={video.uri}
+            key={recordedVideo.uri}
             onPress={() => {
               this.props.navigation.navigate('VideoWithControls', {
-                video: video,
+                recordedVideo: recordedVideo,
                 contentId: this.props.contentId,
               });
             }}>
             <View>
-              <Image source={{uri: video.uri}} style={styles.thumbnail} />
+              <Image
+                source={{uri: recordedVideo.uri}}
+                style={styles.thumbnail}
+              />
             </View>
           </TouchableOpacity>
         ))}
