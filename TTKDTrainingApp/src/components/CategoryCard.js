@@ -3,14 +3,14 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Category = props => {
+const CategoryCard = props => {
   const {category, navigation} = props;
 
   return (
     <TouchableOpacity
       onPress={() =>
         navigation.push('HomeScreen', {
-          categoryId: category.id,
+          category: category,
         })
       }>
       <View style={styles.categoryItem}>
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
   categoryText: {fontSize: 24},
 });
 
-export default Category;
+export default CategoryCard;
