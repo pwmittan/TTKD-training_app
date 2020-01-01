@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   Text,
 } from 'react-native';
+import {withNavigationFocus} from 'react-navigation';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import Video from 'react-native-video';
@@ -37,6 +38,10 @@ const VideoWithControls = props => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
+
+  useEffect(() => {
+    setPaused(true);
+  }, [props.isFocused]);
 
   const handlePlayPausePress = () => {
     if (progress >= 1) {
@@ -172,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoWithControls;
+export default withNavigationFocus(VideoWithControls);
