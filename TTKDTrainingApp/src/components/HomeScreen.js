@@ -1,20 +1,16 @@
 import React from 'react';
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, FlatList} from 'react-native';
 import {useSelector} from 'react-redux';
 import {isEmpty} from 'lodash';
 
-import {
-  getCategory,
-  getSubCategories,
-  getCategoryContent,
-} from './../redux/selectors';
+import {getSubCategories, getCategoryContent} from './../redux/selectors';
 
-import Category from './Category';
+import CategoryCard from './CategoryCard';
 import ContentCard from './ContentCard';
 
 const HomeScreen = ({navigation}) => {
-  const categoryId = navigation.getParam('categoryId') || null;
-  const category = useSelector(state => getCategory(state, categoryId));
+  const category = navigation.getParam('category');
+  const categoryId = category ? category.id : null;
   const categoryContent = useSelector(state =>
     getCategoryContent(state, categoryId),
   );
@@ -22,23 +18,13 @@ const HomeScreen = ({navigation}) => {
     getSubCategories(state, categoryId),
   );
 
-  const renderTitle = (
-    <View style={styles.title}>
-      <Text style={styles.titleText}>
-        {categoryId ? category.category_name : 'TTKD Home'}
-      </Text>
-    </View>
-  );
-
   return (
     <View>
-      {renderTitle}
-
       <FlatList
         data={subCategories}
         keyExtractor={subCategory => `${subCategory.id}`}
         renderItem={({item}) => (
-          <Category navigation={navigation} category={item} />
+          <CategoryCard navigation={navigation} category={item} />
         )}
         ItemSeparatorComponent={() => <View style={styles.listItemSeparator} />}
       />
@@ -58,17 +44,15 @@ const HomeScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-  },
-  titleText: {
-    fontSize: 32,
-    textAlign: 'center',
-  },
   listItemSeparator: {
     borderBottomWidth: 1,
   },
 });
 
+HomeScreen.navigationOptions = ({navigation}) => {
+  const category = navigation.getParam('category') || null;
+  return {
+    title: category ? category.category_name : 'TTKD Home',
+  };
+};
 export default HomeScreen;

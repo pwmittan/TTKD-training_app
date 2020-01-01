@@ -1,12 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {useDispatch} from 'react-redux';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 
@@ -14,7 +8,6 @@ import {addRecordedVideo} from './../redux/actions';
 
 const ReactCamera = props => {
   const [recording, setRecording] = useState(false);
-  const [processing, setProcessing] = useState(false);
 
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
@@ -33,10 +26,7 @@ const ReactCamera = props => {
     });
 
     setRecording(false);
-    setProcessing(true);
     dispatchAddRecordedVideo(recordedvideo);
-
-    setProcessing(false);
   };
   const stopRecording = () => {
     cameraRef.current.stopRecording();
@@ -44,16 +34,14 @@ const ReactCamera = props => {
 
   const buttonText = recording ? 'STOP' : 'RECORD';
 
-  const button = processing ? (
-    <View style={styles.capture}>
-      <ActivityIndicator animating size={18} />
+  const button = (
+    <View style={{opacity: recording ? 0 : 100}}>
+      <TouchableOpacity
+        onPress={recording ? stopRecording : startRecording}
+        style={styles.capture}>
+        <Text style={styles.text}> {buttonText} </Text>
+      </TouchableOpacity>
     </View>
-  ) : (
-    <TouchableOpacity
-      onPress={recording ? stopRecording : startRecording}
-      style={styles.capture}>
-      <Text style={styles.text}> {buttonText} </Text>
-    </TouchableOpacity>
   );
 
   const cameraRef = useRef(null);
@@ -84,6 +72,10 @@ const ReactCamera = props => {
       </View>
     )
   );
+};
+
+ReactCamera.navigationOptions = {
+  title: 'Recording',
 };
 
 export default withNavigationFocus(ReactCamera);

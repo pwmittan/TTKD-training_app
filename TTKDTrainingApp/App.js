@@ -19,6 +19,15 @@ const AppNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'HomeScreen',
+    headerLayoutPreset: 'center',
+    defaultNavigationOptions: {
+      headerStyle: {
+        backgroundColor: 'gray',
+        height: 40,
+      },
+
+      headerTintColor: 'white',
+    },
   },
 );
 

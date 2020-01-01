@@ -9,12 +9,6 @@ const Content = props => {
   const {navigation} = props;
   const content = navigation.getParam('content');
 
-  const renderTitle = (
-    <View style={styles.title}>
-      <Text style={styles.titleText}>{content.title}</Text>
-    </View>
-  );
-
   const renderDesc = (
     <View style={styles.desc}>
       <Text style={styles.descText}>{content.description}</Text>
@@ -35,7 +29,6 @@ const Content = props => {
 
   return (
     <View>
-      {renderTitle}
       {renderDesc}
       <VideoWithControls
         contentVideo={content.video}
@@ -66,5 +59,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+Content.navigationOptions = ({navigation}) => {
+  const content = navigation.getParam('content');
+  return {
+    title: content.title,
+  };
+};
 
 export default Content;
