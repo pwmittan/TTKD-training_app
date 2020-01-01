@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, Button, ScrollView, StyleSheet} from 'react-native';
 
-import VideoWithControlsConnector from './VideoWithControls';
+import VideoWithControls from './VideoWithControls';
 import VideoThumbnail from './VideoThumbnail';
 
 const Content = props => {
+  const [videoLength, setVideoLength] = useState(0);
   const {navigation} = props;
   const content = navigation.getParam('content');
 
@@ -24,7 +25,10 @@ const Content = props => {
     <Button
       title="Start Recording"
       onPress={() => {
-        navigation.navigate('ReactCamera', {contentId: content.id});
+        navigation.navigate('ReactCamera', {
+          contentId: content.id,
+          maxLength: videoLength,
+        });
       }}
     />
   );
@@ -33,7 +37,10 @@ const Content = props => {
     <View>
       {renderTitle}
       {renderDesc}
-      <VideoWithControlsConnector contentVideo={content.video} />
+      <VideoWithControls
+        contentVideo={content.video}
+        setVideoLength={setVideoLength}
+      />
       {recordButton}
       <ScrollView horizontal={true}>
         <VideoThumbnail navigation={navigation} contentId={content.id} />

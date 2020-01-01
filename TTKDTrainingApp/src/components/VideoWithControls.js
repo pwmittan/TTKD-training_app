@@ -21,6 +21,8 @@ const secondsToTime = time => {
 const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
 const DEFAULT_SPEED = 1.0;
 
+const PROGRESS_BAR_WIDTH = 250;
+
 const VideoWithControls = props => {
   const contentId = props.navigation && props.navigation.getParam('contentId');
 
@@ -38,14 +40,16 @@ const VideoWithControls = props => {
 
   const handlePlayPausePress = () => {
     if (progress >= 1) {
-      player.current.seek(0);
+      contentVideoRef.current.seek(0);
+      recordedVideoRef.current && recordedVideoRef.current.seek(0);
     }
     setPaused(!paused);
   };
   const handleProgressPress = e => {
     const position = e.nativeEvent.locationX;
-    const newProgress = (position / 250) * duration;
-    player.current.seek(newProgress);
+    const newProgress = (position / PROGRESS_BAR_WIDTH) * duration;
+    contentVideoRef.current.seek(newProgress);
+    recordedVideoRef.current && recordedVideoRef.current.seek(newProgress);
   };
   const handleRateTouch = () =>
     setRate(
@@ -59,7 +63,10 @@ const VideoWithControls = props => {
   };
   const handleProgress = curProgress =>
     setProgress(curProgress.currentTime / duration);
-  const handleLoad = meta => setDuration(meta.duration);
+  const handleLoad = meta => {
+    setDuration(meta.duration);
+    props.setVideoLength && props.setVideoLength(meta.duration);
+  };
 
   const {width} = Dimensions.get('window');
   const videoHeight = width * 0.5265;
@@ -70,7 +77,8 @@ const VideoWithControls = props => {
     ? {uri: contentVideo.uri}
     : contentVideo;
 
-  const player = useRef(null);
+  const recordedVideoRef = useRef(null);
+  const contentVideoRef = useRef(null);
 
   return (
     <View style={styles.container}>
@@ -83,10 +91,8 @@ const VideoWithControls = props => {
                 paused={paused}
                 rate={rate}
                 resizeMode="contain"
-                onLoad={handleLoad}
-                onProgress={handleProgress}
                 onEnd={handleEnd}
-                ref={player}
+                ref={recordedVideoRef}
                 style={{height: videoHeight, width: '100%'}}
               />
             )}
@@ -98,7 +104,7 @@ const VideoWithControls = props => {
               onLoad={handleLoad}
               onProgress={handleProgress}
               onEnd={handleEnd}
-              ref={player}
+              ref={contentVideoRef}
               style={{height: videoHeight, width: '100%'}}
             />
           </View>
@@ -119,7 +125,7 @@ const VideoWithControls = props => {
               color={Colors.white}
               unfilledColor="rgba(255,255,255,0.5)"
               borderColor={Colors.white}
-              width={250}
+              width={PROGRESS_BAR_WIDTH}
               height={20}
             />
           </View>
@@ -136,7 +142,12 @@ const VideoWithControls = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {width: '100%', alignItems: 'center', justifyContent: 'center'},
+  container: {
+    width: '100%',
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   controls: {
     backgroundColor: 'rgba(0,0,0,0.5)',
     height: 48,

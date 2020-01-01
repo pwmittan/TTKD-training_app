@@ -18,6 +18,7 @@ const ReactCamera = props => {
 
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
+  const maxLength = navigation.getParam('maxLength');
   const dispatch = useDispatch();
 
   const dispatchAddRecordedVideo = recordedvideo =>
@@ -28,6 +29,7 @@ const ReactCamera = props => {
     // default to mp4 for android as codec is not set
     const recordedvideo = await cameraRef.current.recordAsync({
       mute: true,
+      maxDuration: maxLength,
     });
 
     setRecording(false);
