@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
@@ -7,41 +7,42 @@ import {withNavigationFocus} from 'react-navigation';
 import {addRecordedVideo} from './../redux/actions';
 
 const ReactCamera = props => {
-  const [recording, setRecording] = useState(false);
-
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
   const maxLength = navigation.getParam('maxLength');
-  const dispatch = useDispatch();
 
+  const [recording, setRecording] = useState(false);
+
+  useEffect(() => {
+    if (recording === true) {
+      startRecording();
+    }
+  });
+
+  const dispatch = useDispatch();
   const dispatchAddRecordedVideo = recordedvideo =>
     dispatch(addRecordedVideo({...recordedvideo, contentId}));
 
   const startRecording = async () => {
-    setRecording(true);
     // default to mp4 for android as codec is not set
     const recordedvideo = await cameraRef.current.recordAsync({
       mute: true,
       maxDuration: maxLength,
     });
 
-    setRecording(false);
     dispatchAddRecordedVideo(recordedvideo);
-  };
-  const stopRecording = () => {
-    cameraRef.current.stopRecording();
+    setRecording(false);
   };
 
-  const buttonText = recording ? 'STOP' : 'RECORD';
+  // Simply commenting this code out in case we need to explicitly call stopRecording at any point
+  // const stopRecording = () => {
+  //   cameraRef.current.stopRecording();
+  // };
 
   const button = (
-    <View style={{opacity: recording ? 0 : 100}}>
-      <TouchableOpacity
-        onPress={recording ? stopRecording : startRecording}
-        style={styles.capture}>
-        <Text style={styles.text}> {buttonText} </Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity onPress={() => setRecording(true)} style={styles.capture}>
+      <Text style={styles.text}> RECORD </Text>
+    </TouchableOpacity>
   );
 
   const cameraRef = useRef(null);
@@ -68,7 +69,7 @@ const ReactCamera = props => {
           //   buttonNegative: 'Cancel',
           // }}
         />
-        <View style={styles.button}>{button}</View>
+        {!recording && <View style={styles.button}>{button}</View>}
       </View>
     )
   );
