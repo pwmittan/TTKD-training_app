@@ -40,7 +40,9 @@ const VideoWithControls = props => {
   const [rate, setRate] = useState(DEFAULT_SPEED);
 
   useEffect(() => {
-    setPaused(true);
+    if (!props.isFocused) {
+      setPaused(true);
+    }
   }, [props.isFocused]);
 
   const handlePlayPausePress = () => {
