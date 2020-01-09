@@ -8,6 +8,7 @@ import {
   Text,
 } from 'react-native';
 import {withNavigationFocus} from 'react-navigation';
+import {HeaderBackButton} from 'react-navigation-stack';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import Video from 'react-native-video';
@@ -178,5 +179,16 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
 });
+
+VideoWithControls.navigationOptions = ({navigation}) => {
+  return {
+    headerLeft: (
+      <HeaderBackButton
+        tintColor="white"
+        onPress={() => navigation.navigate('Content')}
+      />
+    ),
+  };
+};
 
 export default withNavigationFocus(VideoWithControls);
