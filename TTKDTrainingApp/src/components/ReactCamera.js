@@ -27,8 +27,14 @@ const ReactCamera = props => {
 
   // Handles stopping video if back button is pressed
   useEffect(() => {
-    shouldCancelVideo && cameraRef.current && cameraRef.current.stopRecording();
-  }, [shouldCancelVideo]);
+    if (recording) {
+      shouldCancelVideo &&
+        cameraRef.current &&
+        cameraRef.current.stopRecording();
+    } else {
+      shouldCancelVideo && navigation.goBack();
+    }
+  }, [shouldCancelVideo, navigation, recording]);
 
   // Handles dispatching video and navigation once recording is stopped
   useEffect(() => {
