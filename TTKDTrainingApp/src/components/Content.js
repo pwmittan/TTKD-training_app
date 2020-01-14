@@ -31,7 +31,7 @@ const Content = props => {
     <View>
       {renderDesc}
       <VideoWithControls
-        contentVideo={content.video}
+        contentId={content.id}
         setVideoLength={setVideoLength}
       />
       {recordButton}
