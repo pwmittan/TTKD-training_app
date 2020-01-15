@@ -27,5 +27,10 @@ export const getContentOwnVideo = (store, contentId = -1) => {
   return contentFromId && contentFromId.video;
 };
 
-export const getContentOwnSteps = (store, contentId) =>
-  getAllSteps(store).filter(step => step.content_id === contentId);
+export const getContentOwnStepsSorted = (store, contentId) =>
+  getAllSteps(store)
+    .filter(step => step.content_id === contentId)
+    .sort(
+      (step1, step2) =>
+        !step2.start_time || step2.start_time < step1.start_time,
+    );
