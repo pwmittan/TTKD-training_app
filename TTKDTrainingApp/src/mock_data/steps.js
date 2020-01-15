@@ -32,7 +32,8 @@ export const steps = [
     content_id: 7,
     start_time: null,
     end_time: 6,
-    text: 'This is the textual content for step number one',
+    text:
+      'This is the textual content for step number one, it should be multiline',
   },
   {
     id: 6,
@@ -46,7 +47,8 @@ export const steps = [
     content_id: 7,
     start_time: 10,
     end_time: 13,
-    text: 'This is the textual content for step number three',
+    text:
+      'This is the textual content for step number three, it should be multiline',
   },
   {
     id: 9,
@@ -60,6 +62,7 @@ export const steps = [
     content_id: 7,
     start_time: 13,
     end_time: 17,
-    text: 'This is the textual content for step number four',
+    text:
+      'This is the textual content for step number four, it should be multiline',
   },
 ];

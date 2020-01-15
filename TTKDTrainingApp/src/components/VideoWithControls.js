@@ -6,16 +6,20 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Text,
+  FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import Video from 'react-native-video';
 import ProgressBar from 'react-native-progress/Bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {getContentOwnVideo} from './../redux/selectors';
+import {
+  getContentOwnVideo,
+  getContentOwnStepsSorted,
+} from './../redux/selectors';
 
 const secondsToTime = time => {
   return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
@@ -26,12 +30,18 @@ const DEFAULT_SPEED = 1.0;
 const PROGRESS_BAR_WIDTH = 250;
 
 const VideoWithControls = props => {
-  const contentId = props.navigation && props.navigation.getParam('contentId');
+  const contentId =
+    (props.navigation && props.navigation.getParam('contentId')) ||
+    props.contentId;
 
-  let contentVideo = useSelector(state => getContentOwnVideo(state, contentId));
-  if (!contentVideo) {
-    contentVideo = props.contentVideo;
-  }
+  const contentVideo = useSelector(state =>
+    getContentOwnVideo(state, contentId),
+  );
+
+  const steps = useSelector(state =>
+    getContentOwnStepsSorted(state, contentId),
+  );
+
   const recordedVideo =
     props.navigation && props.navigation.getParam('recordedVideo');
 
@@ -46,6 +56,10 @@ const VideoWithControls = props => {
     }
   }, [props.isFocused]);
 
+  const handleLoad = meta => {
+    setDuration(meta.duration);
+    props.setVideoLength && props.setVideoLength(meta.duration);
+  };
   const handlePlayPausePress = () => {
     if (progress >= 1) {
       contentVideoRef.current.seek(0);
@@ -54,10 +68,14 @@ const VideoWithControls = props => {
     setPaused(!paused);
   };
   const handleProgressPress = e => {
-    const position = e.nativeEvent.locationX;
-    const newProgress = (position / PROGRESS_BAR_WIDTH) * duration;
-    contentVideoRef.current.seek(newProgress);
-    recordedVideoRef.current && recordedVideoRef.current.seek(newProgress);
+    const progressBarPosition = e.nativeEvent.locationX;
+    const seekTime = (progressBarPosition / PROGRESS_BAR_WIDTH) * duration;
+
+    contentVideoRef.current.seek(seekTime);
+    recordedVideoRef.current && recordedVideoRef.current.seek(seekTime);
+  };
+  const handleProgress = curProgress => {
+    setProgress(curProgress.currentTime / duration);
   };
   const handleRateTouch = () =>
     setRate(
@@ -69,11 +87,10 @@ const VideoWithControls = props => {
     setPaused(true);
     setProgress(1);
   };
-  const handleProgress = curProgress =>
-    setProgress(curProgress.currentTime / duration);
-  const handleLoad = meta => {
-    setDuration(meta.duration);
-    props.setVideoLength && props.setVideoLength(meta.duration);
+
+  const handleStepPress = stepTime => {
+    contentVideoRef.current.seek(stepTime);
+    recordedVideoRef.current && recordedVideoRef.current.seek(stepTime);
   };
 
   const {width} = Dimensions.get('window');
@@ -90,7 +107,8 @@ const VideoWithControls = props => {
 
   return (
     <View style={styles.container}>
-      <View style={{height: fullHeight + 48, width: '100%'}}>
+      {/* Videos */}
+      <View style={{height: fullHeight, width: '100%'}}>
         <TouchableWithoutFeedback onPress={handlePlayPausePress}>
           <View>
             {recordedVideo && (
@@ -118,32 +136,58 @@ const VideoWithControls = props => {
           </View>
         </TouchableWithoutFeedback>
       </View>
+      {/* Controls */}
       <View style={styles.controls}>
         <TouchableWithoutFeedback onPress={handlePlayPausePress}>
           <Icon
             name={!paused ? 'pause' : 'play'}
             size={30}
-            color={Colors.white}
+            color="rgb(255,255,255)"
           />
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={handleProgressPress}>
           <View>
             <ProgressBar
               progress={progress}
-              color={Colors.white}
+              color="rgb(255,255,255)"
               unfilledColor="rgba(255,255,255,0.5)"
-              borderColor={Colors.white}
+              borderColor="rgb(255,255,255)"
               width={PROGRESS_BAR_WIDTH}
               height={20}
             />
           </View>
         </TouchableWithoutFeedback>
-        <Text style={styles.duration}>
+        <Text style={styles.controlsText}>
           {secondsToTime(Math.floor(progress * duration))}
         </Text>
         <TouchableWithoutFeedback onPress={handleRateTouch}>
-          <Text style={styles.rate}>{`${rate}x`}</Text>
+          <Text style={styles.controlsText}>{`${rate}x`}</Text>
         </TouchableWithoutFeedback>
+      </View>
+      {/* Steps */}
+      <View style={styles.steps}>
+        <FlatList
+          data={steps}
+          keyExtractor={step => `${step.id}`}
+          renderItem={({item}) => {
+            const progressSeconds = Math.round(progress * duration);
+            const isCurrentStep =
+              (!item.start_time || item.start_time <= progressSeconds) &&
+              (!item.end_time || item.end_time > progressSeconds);
+            return (
+              <TouchableOpacity
+                onPress={() => handleStepPress(item.start_time || 0)}>
+                <View
+                  style={[
+                    styles.step,
+                    isCurrentStep ? styles.currentStep : null,
+                  ]}>
+                  <Text style={styles.stepText}>{`\u2022 ${item.text}`}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -152,31 +196,34 @@ const VideoWithControls = props => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'center',
   },
   controls: {
+    width: '100%',
     backgroundColor: 'rgba(0,0,0,0.5)',
     height: 48,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
   },
-  mainButton: {
-    marginRight: 15,
+  steps: {
+    width: '100%',
+    justifyContent: 'flex-start',
   },
-  duration: {
-    color: Colors.white,
-    marginLeft: 15,
+  step: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
   },
-  rate: {
-    color: Colors.white,
+  currentStep: {
+    backgroundColor: '#C4BBBB',
+  },
+  stepText: {
+    fontSize: 16,
+  },
+  controlsText: {
+    color: 'rgb(255,255,255)',
   },
 });
 
