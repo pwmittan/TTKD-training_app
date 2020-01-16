@@ -17,6 +17,7 @@ const ReactCamera = props => {
 
   const [countdown, setCountdown] = useState(5);
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
+  const [countdownIntervalId, setCountdownIntervalId] = useState(null);
   const [recording, setRecording] = useState(false);
   const [recordedVideo, setRecordedVideo] = useState(null);
 
@@ -24,15 +25,16 @@ const ReactCamera = props => {
   useEffect(() => {
     if (shouldShowCountdown && countdown === 5) {
       let methodCountdown = 5;
-      const newIntervalId = setInterval(() => {
+      const intervalId = setInterval(() => {
         methodCountdown--;
         setCountdown(methodCountdown);
         if (!methodCountdown) {
           setShouldShowCountdown(false);
-          clearInterval(newIntervalId);
+          clearInterval(intervalId);
           setRecording(true);
         }
       }, 1000);
+      setCountdownIntervalId(intervalId);
     }
   }, [shouldShowCountdown, countdown]);
   // Handles starting recording
@@ -49,9 +51,12 @@ const ReactCamera = props => {
         cameraRef.current &&
         cameraRef.current.stopRecording();
     } else {
+      shouldCancelVideo &&
+        countdownIntervalId &&
+        clearInterval(countdownIntervalId);
       shouldCancelVideo && navigation.goBack();
     }
-  }, [shouldCancelVideo, navigation, recording]);
+  }, [shouldCancelVideo, navigation, recording, countdownIntervalId]);
 
   // Handles dispatching video and navigation once recording is stopped
   useEffect(() => {
