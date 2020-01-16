@@ -15,9 +15,26 @@ const ReactCamera = props => {
   const maxLength = navigation.getParam('maxLength');
   const shouldCancelVideo = navigation.getParam('shouldCancelVideo');
 
+  const [countdown, setCountdown] = useState(5);
+  const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [recording, setRecording] = useState(false);
   const [recordedVideo, setRecordedVideo] = useState(null);
 
+  // Handles Countdown and Setting Recording
+  useEffect(() => {
+    if (shouldShowCountdown && countdown === 5) {
+      let methodCountdown = 5;
+      const newIntervalId = setInterval(() => {
+        methodCountdown--;
+        setCountdown(methodCountdown);
+        if (!methodCountdown) {
+          setShouldShowCountdown(false);
+          clearInterval(newIntervalId);
+          setRecording(true);
+        }
+      }, 1000);
+    }
+  }, [shouldShowCountdown, countdown]);
   // Handles starting recording
   useEffect(() => {
     if (recording === true) {
@@ -69,7 +86,9 @@ const ReactCamera = props => {
   }, [maxLength]);
 
   const button = (
-    <TouchableOpacity onPress={() => setRecording(true)} style={styles.capture}>
+    <TouchableOpacity
+      onPress={() => setShouldShowCountdown(true)}
+      style={styles.capture}>
       <Text style={styles.text}> RECORD </Text>
     </TouchableOpacity>
   );
@@ -98,7 +117,14 @@ const ReactCamera = props => {
           //   buttonNegative: 'Cancel',
           // }}
         />
-        {!recording && <View style={styles.button}>{button}</View>}
+        {!recording && !shouldShowCountdown && (
+          <View style={styles.button}>{button}</View>
+        )}
+        {shouldShowCountdown && (
+          <View style={styles.countdown}>
+            <Text style={styles.countdownText}>{countdown}</Text>
+          </View>
+        )}
       </View>
     )
   );
@@ -139,10 +165,19 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   button: {
+    position: 'absolute',
+    bottom: 50,
+    alignSelf: 'center',
     flex: 0,
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  countdown: {
+    position: 'absolute',
+    bottom: 50,
+    alignSelf: 'center',
+  },
+  countdownText: {fontSize: 75, color: 'red'},
   text: {
     fontSize: 14,
   },
