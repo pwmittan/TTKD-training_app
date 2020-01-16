@@ -5,6 +5,7 @@ import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
+import Countdown from './Countdown';
 import {addRecordedVideo} from './../redux/actions';
 
 const ReactCamera = props => {
@@ -15,28 +16,10 @@ const ReactCamera = props => {
   const maxLength = navigation.getParam('maxLength');
   const shouldCancelVideo = navigation.getParam('shouldCancelVideo');
 
-  const [countdown, setCountdown] = useState(5);
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
-  const [countdownIntervalId, setCountdownIntervalId] = useState(null);
   const [recording, setRecording] = useState(false);
   const [recordedVideo, setRecordedVideo] = useState(null);
 
-  // Handles Countdown and Setting Recording
-  useEffect(() => {
-    if (shouldShowCountdown && countdown === 5) {
-      let methodCountdown = 5;
-      const intervalId = setInterval(() => {
-        methodCountdown--;
-        setCountdown(methodCountdown);
-        if (!methodCountdown) {
-          setShouldShowCountdown(false);
-          clearInterval(intervalId);
-          setRecording(true);
-        }
-      }, 1000);
-      setCountdownIntervalId(intervalId);
-    }
-  }, [shouldShowCountdown, countdown]);
   // Handles starting recording
   useEffect(() => {
     if (recording === true) {
@@ -51,12 +34,9 @@ const ReactCamera = props => {
         cameraRef.current &&
         cameraRef.current.stopRecording();
     } else {
-      shouldCancelVideo &&
-        countdownIntervalId &&
-        clearInterval(countdownIntervalId);
       shouldCancelVideo && navigation.goBack();
     }
-  }, [shouldCancelVideo, navigation, recording, countdownIntervalId]);
+  }, [shouldCancelVideo, navigation, recording]);
 
   // Handles dispatching video and navigation once recording is stopped
   useEffect(() => {
@@ -127,7 +107,13 @@ const ReactCamera = props => {
         )}
         {shouldShowCountdown && (
           <View style={styles.countdown}>
-            <Text style={styles.countdownText}>{countdown}</Text>
+            <Countdown
+              countdownTime={5}
+              countdownFinished={() => {
+                setShouldShowCountdown(false);
+                setRecording(true);
+              }}
+            />
           </View>
         )}
       </View>
@@ -182,7 +168,6 @@ const styles = StyleSheet.create({
     bottom: 50,
     alignSelf: 'center',
   },
-  countdownText: {fontSize: 75, color: 'red'},
   text: {
     fontSize: 14,
   },
