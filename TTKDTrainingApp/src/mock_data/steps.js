@@ -2,7 +2,7 @@ export const steps = [
   {
     id: 1,
     content_id: 2,
-    start_time: null,
+    start_time: 0,
     end_time: 2,
     text: 'Step one goes here',
   },
@@ -30,7 +30,7 @@ export const steps = [
   {
     id: 5,
     content_id: 7,
-    start_time: null,
+    start_time: 0,
     end_time: 6,
     text:
       'This is the textual content for step number one, it should be multiline',
