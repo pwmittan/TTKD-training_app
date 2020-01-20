@@ -3,6 +3,7 @@ import {
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
+  SET_VIDEO_URIS,
 } from './actionTypes';
 
 export const addRecordedVideo = video => {
@@ -28,5 +29,48 @@ export const setSteps = steps => {
   return {
     type: SET_STEPS,
     payload: steps,
+  };
+};
+
+export const setHomeScreenData = () => {
+  return dispatch => {
+    fetch(
+      'https://sfjy3c2yji.execute-api.us-east-1.amazonaws.com/TestDBFetchall',
+    )
+      .then(res => res.json())
+      .then(data => {
+        dispatch(setCategories(data.categories));
+        dispatch(setContent(data.content));
+        dispatch(setSteps(data.steps));
+        dispatch(presignVideoUris(data.content));
+      })
+      .catch(console.log);
+  };
+};
+
+const presignVideoUris = content => {
+  return dispatch => {
+    const videoPaths = content.reduce((allVals, currVal) => {
+      return {...allVals, [currVal.id]: currVal.video_uri};
+    }, {});
+    let url = new URL(
+      'https://g4o9el325j.execute-api.us-east-1.amazonaws.com/TestS3PresignUrl',
+    );
+    url._url = url.toString().endsWith('/')
+      ? url.toString().slice(0, -1)
+      : url.toString();
+    Object.keys(videoPaths).map(key =>
+      url.searchParams.append(key, videoPaths[key]),
+    );
+    fetch(url)
+      .then(res => res.json())
+      .then(data => dispatch(setVideoUris(data)));
+  };
+};
+
+const setVideoUris = videoUris => {
+  return {
+    type: SET_VIDEO_URIS,
+    payload: videoUris,
   };
 };
