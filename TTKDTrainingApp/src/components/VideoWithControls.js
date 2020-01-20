@@ -17,8 +17,8 @@ import ProgressBar from 'react-native-progress/Bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
-  getContentOwnVideo,
   getContentOwnStepsSorted,
+  getContentVideoUri,
 } from './../redux/selectors';
 
 const secondsToTime = time => {
@@ -34,10 +34,6 @@ const VideoWithControls = props => {
     (props.navigation && props.navigation.getParam('contentId')) ||
     props.contentId;
 
-  const contentVideo = useSelector(state =>
-    getContentOwnVideo(state, contentId),
-  );
-
   const steps = useSelector(state =>
     getContentOwnStepsSorted(state, contentId),
   );
@@ -49,6 +45,9 @@ const VideoWithControls = props => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
+  const contentVideoUri = useSelector(state =>
+    getContentVideoUri(state, contentId),
+  );
 
   useEffect(() => {
     if (!props.isFocused) {
@@ -97,11 +96,6 @@ const VideoWithControls = props => {
   const videoHeight = width * 0.5265;
   const fullHeight = recordedVideo ? videoHeight * 2 : videoHeight;
 
-  // Shim to be able to use local video files until file hosting is working
-  const contentVideoSource = contentVideo.uri
-    ? {uri: contentVideo.uri}
-    : contentVideo;
-
   const recordedVideoRef = useRef(null);
   const contentVideoRef = useRef(null);
 
@@ -123,11 +117,22 @@ const VideoWithControls = props => {
               />
             )}
             <Video
-              source={contentVideoSource}
+              source={{uri: contentVideoUri}}
               paused={paused}
               rate={rate}
+              // onBuffer={() => {
+              //   console.log('buffering!');
+              //   setPaused(true);
+              // }}
+              // bufferConfig={{
+              //   minBufferMs: 15000,
+              //   maxBufferMs: 50000,
+              //   bufferForPlaybackMs: 2500,
+              //   bufferForPlaybackAfterRebufferMs: 5000,
+              // }}
               resizeMode="contain"
               onLoad={handleLoad}
+              onError={e => console.error('ERROR: ', e)}
               onProgress={handleProgress}
               onEnd={handleEnd}
               ref={contentVideoRef}
@@ -182,7 +187,9 @@ const VideoWithControls = props => {
                     styles.step,
                     isCurrentStep ? styles.currentStep : null,
                   ]}>
-                  <Text style={styles.stepText}>{`\u2022 ${item.text}`}</Text>
+                  <Text style={styles.stepText}>
+                    {`\u2022 ${item.description}`}
+                  </Text>
                 </View>
               </TouchableOpacity>
             );
