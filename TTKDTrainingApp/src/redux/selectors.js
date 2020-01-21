@@ -21,11 +21,11 @@ export const getSubCategories = (store, parentId) =>
 export const getCategoryContent = (store, categoryId) =>
   getAllContent(store).filter(content => content.category_id === categoryId);
 
-export const getContentOwnVideo = (store, contentId = -1) => {
+export const getContentOwnVideoUri = (store, contentId = -1) => {
   const contentFromId = getAllContent(store).find(
     content => content.id === contentId,
   );
-  return contentFromId && contentFromId.video;
+  return contentFromId && contentFromId.video_uri;
 };
 
 export const getContentVideoUri = (store, contentId) =>

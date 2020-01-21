@@ -1,5 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {useSelector} from 'react-redux';
+import convertToProxyURL from 'react-native-video-cache';
 import {
   StyleSheet,
   View,
@@ -18,7 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
   getContentOwnStepsSorted,
-  getContentVideoUri,
+  getContentOwnVideoUri,
 } from './../redux/selectors';
 
 const secondsToTime = time => {
@@ -28,6 +29,7 @@ const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
 const DEFAULT_SPEED = 1.0;
 
 const PROGRESS_BAR_WIDTH = 250;
+const BASE_URI = 'd1mgu9nre4t15i.cloudfront.net';
 
 const VideoWithControls = props => {
   const contentId =
@@ -37,6 +39,9 @@ const VideoWithControls = props => {
   const steps = useSelector(state =>
     getContentOwnStepsSorted(state, contentId),
   );
+  const contentVideoUri = useSelector(state =>
+    getContentOwnVideoUri(state, contentId),
+  );
 
   const recordedVideo =
     props.navigation && props.navigation.getParam('recordedVideo');
@@ -45,9 +50,18 @@ const VideoWithControls = props => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
-  const contentVideoUri = useSelector(state =>
-    getContentVideoUri(state, contentId),
-  );
+  const [proxyUri, setProxyUri] = useState(null);
+  const fullContentVideoUri = `https://${BASE_URI}/${contentVideoUri}`;
+
+  useEffect(() => {
+    const genProxyUri = async () => {
+      await convertToProxyURL(fullContentVideoUri).then(res =>
+        setProxyUri(res),
+      );
+    };
+    genProxyUri();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!props.isFocused) {
@@ -116,28 +130,32 @@ const VideoWithControls = props => {
                 style={{height: videoHeight, width: '100%'}}
               />
             )}
-            <Video
-              source={{uri: contentVideoUri}}
-              paused={paused}
-              rate={rate}
-              // onBuffer={() => {
-              //   console.log('buffering!');
-              //   setPaused(true);
-              // }}
-              // bufferConfig={{
-              //   minBufferMs: 15000,
-              //   maxBufferMs: 50000,
-              //   bufferForPlaybackMs: 2500,
-              //   bufferForPlaybackAfterRebufferMs: 5000,
-              // }}
-              resizeMode="contain"
-              onLoad={handleLoad}
-              onError={e => console.error('ERROR: ', e)}
-              onProgress={handleProgress}
-              onEnd={handleEnd}
-              ref={contentVideoRef}
-              style={{height: videoHeight, width: '100%'}}
-            />
+            {proxyUri && (
+              <Video
+                source={{
+                  uri: proxyUri,
+                }}
+                paused={paused}
+                rate={rate}
+                onBuffer={() => {
+                  console.info('buffering!');
+                  setPaused(true);
+                }}
+                // bufferConfig={{
+                //   minBufferMs: 15000,
+                //   maxBufferMs: 50000,
+                //   bufferForPlaybackMs: 2500,
+                //   bufferForPlaybackAfterRebufferMs: 5000,
+                // }}
+                resizeMode="contain"
+                onLoad={handleLoad}
+                onError={e => console.error('ERROR: ', e)}
+                onProgress={handleProgress}
+                onEnd={handleEnd}
+                ref={contentVideoRef}
+                style={{height: videoHeight, width: '100%'}}
+              />
+            )}
           </View>
         </TouchableWithoutFeedback>
       </View>
