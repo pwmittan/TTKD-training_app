@@ -29,7 +29,7 @@ const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
 const DEFAULT_SPEED = 1.0;
 
 const PROGRESS_BAR_WIDTH = 250;
-const BASE_URI = 'd1mgu9nre4t15i.cloudfront.net';
+const BASE_URI = 'https://ttkd-test-s3.s3.amazonaws.com/ttkd';
 
 const VideoWithControls = props => {
   const contentId =
@@ -51,7 +51,7 @@ const VideoWithControls = props => {
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
   const [proxyUri, setProxyUri] = useState(null);
-  const fullContentVideoUri = `https://${BASE_URI}/${contentVideoUri}`;
+  const fullContentVideoUri = `${BASE_URI}/${contentVideoUri}`;
 
   useEffect(() => {
     const genProxyUri = async () => {
