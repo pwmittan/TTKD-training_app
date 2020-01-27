@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Button, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, Button, StyleSheet} from 'react-native';
 
 import VideoWithControls from './VideoWithControls';
 import VideoThumbnail from './VideoThumbnail';
@@ -28,29 +28,20 @@ const Content = props => {
   );
 
   return (
-    <View>
+    <View style={styles.container}>
       {renderDesc}
       <VideoWithControls
         contentId={content.id}
         setVideoLength={setVideoLength}
       />
       {recordButton}
-      <ScrollView horizontal={true}>
-        <VideoThumbnail navigation={navigation} contentId={content.id} />
-      </ScrollView>
+      <VideoThumbnail navigation={navigation} contentId={content.id} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
-    paddingHorizontal: 12,
-    borderBottomWidth: 1,
-  },
-  titleText: {
-    fontSize: 28,
-    textAlign: 'center',
-  },
+  container: {flex: 1},
   desc: {
     paddingHorizontal: 12,
     paddingVertical: 8,

@@ -1,5 +1,11 @@
 import React from 'react';
-import {StyleSheet, Image, View, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Image,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import {useSelector} from 'react-redux';
 import {getRecordedVideosForContent} from './../redux/selectors';
 
@@ -9,20 +15,25 @@ const VideoThumbnail = props => {
   );
   return (
     <View style={styles.container}>
-      {recordedVideos.map(recordedVideo => (
-        <TouchableOpacity
-          key={recordedVideo.uri}
-          onPress={() => {
-            props.navigation.navigate('VideoWithControls', {
-              recordedVideo: recordedVideo,
-              contentId: props.contentId,
-            });
-          }}>
-          <View>
-            <Image source={{uri: recordedVideo.uri}} style={styles.thumbnail} />
-          </View>
-        </TouchableOpacity>
-      ))}
+      <ScrollView horizontal={true}>
+        {recordedVideos.map(recordedVideo => (
+          <TouchableOpacity
+            key={recordedVideo.uri}
+            onPress={() => {
+              props.navigation.navigate('VideoWithControls', {
+                recordedVideo: recordedVideo,
+                contentId: props.contentId,
+              });
+            }}>
+            <View>
+              <Image
+                source={{uri: recordedVideo.uri}}
+                style={styles.thumbnail}
+              />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };
