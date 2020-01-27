@@ -33,8 +33,6 @@ const secondsToTime = time => {
   return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
 };
 
-const createFullVideoUri = videoPath => `${BASE_URI}/${videoPath}`;
-
 const VideoWithControls = props => {
   const dispatch = useDispatch();
 
@@ -73,7 +71,7 @@ const VideoWithControls = props => {
 
   useEffect(() => {
     !cachedVideoPath &&
-      dispatch(genCachedUri(contentId, createFullVideoUri(contentVideoUri)));
+      dispatch(genCachedUri(contentId, BASE_URI, contentVideoUri));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -170,7 +168,7 @@ const VideoWithControls = props => {
   return (
     <View style={styles.container}>
       {/* Videos */}
-      <View style={{height: fullHeight, width: '100%'}}>
+      <View style={{height: fullHeight, ...styles.video}}>
         <TouchableWithoutFeedback onPress={handlePlayPausePress}>
           <View>
             {recordedVideo && (
@@ -181,7 +179,7 @@ const VideoWithControls = props => {
                 resizeMode="contain"
                 onEnd={handleEnd}
                 ref={videoRefs.recordedVideoRef}
-                style={{height: videoHeight, width: '100%'}}
+                style={{height: videoHeight, ...styles.video}}
               />
             )}
             {cachedVideoPath && (
@@ -207,7 +205,7 @@ const VideoWithControls = props => {
                 onProgress={handleProgress}
                 onEnd={handleEnd}
                 ref={videoRefs.contentVideoRef}
-                style={{height: videoHeight, width: '100%'}}
+                style={{height: videoHeight, ...styles.video}}
               />
             )}
           </View>
@@ -252,6 +250,9 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  video: {
+    width: '100%',
   },
   controls: {
     width: '100%',

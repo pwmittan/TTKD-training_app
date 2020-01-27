@@ -1,3 +1,4 @@
+import RNFS from 'react-native-fs';
 import {
   ADD_RECORDED_VIDEO,
   SET_CATEGORIES,
@@ -83,11 +84,32 @@ const setVideoUris = videoUris => {
   };
 };
 
-export const genCachedUri = (contentId, videoUri) => {
+export const genCachedUri = (contentId, directoryUri, videoUri) => {
   return dispatch => {
-    // (videoUri).then(res =>
-    //   dispatch(addCachedVideoPath({[contentId]: res})),
-    // );
+    const filePath = `${RNFS.DocumentDirectoryPath}/${videoUri}`;
+    RNFS.exists(filePath).then(exists => {
+      if (exists) {
+        console.info('File already Exists, adding to Redux Store', filePath);
+        dispatch(addCachedVideoPath({[contentId]: filePath}));
+      } else {
+        RNFS.downloadFile({
+          fromUrl: `${directoryUri}/${videoUri}`,
+          toFile: filePath,
+          background: true,
+        })
+          .promise.then(res => {
+            console.info(
+              'File downloaded, adding to Redux Store',
+              res,
+              filePath,
+            );
+            dispatch(addCachedVideoPath({[contentId]: filePath}));
+          })
+          .catch(err => {
+            console.info('Error downloading file', err);
+          });
+      }
+    });
   };
 };
 
