@@ -1,9 +1,11 @@
+import convertToProxyURL from 'react-native-video-cache';
 import {
   ADD_RECORDED_VIDEO,
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
   SET_VIDEO_URIS,
+  ADD_CACHED_VIDEO_PATH,
 } from './actionTypes';
 
 export const addRecordedVideo = video => {
@@ -48,6 +50,9 @@ export const setHomeScreenData = () => {
   };
 };
 
+// Currently not needed as s3 files are publicly readable
+// If changed to private this will be needed
+// Leaving redux related code in for now
 const presignVideoUris = content => {
   return dispatch => {
     const videoPaths = content.reduce((allVals, currVal) => {
@@ -76,5 +81,20 @@ const setVideoUris = videoUris => {
   return {
     type: SET_VIDEO_URIS,
     payload: videoUris,
+  };
+};
+
+export const genCachedUri = (contentId, videoUri) => {
+  return dispatch => {
+    convertToProxyURL(videoUri).then(res =>
+      dispatch(addCachedVideoPath({[contentId]: res})),
+    );
+  };
+};
+
+const addCachedVideoPath = cachedVideoPathObject => {
+  return {
+    type: ADD_CACHED_VIDEO_PATH,
+    payload: cachedVideoPathObject,
   };
 };

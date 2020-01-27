@@ -3,6 +3,7 @@ import {
   SET_CONTENT,
   SET_STEPS,
   SET_VIDEO_URIS,
+  ADD_CACHED_VIDEO_PATH,
 } from '../actionTypes';
 
 const initialState = {
@@ -10,6 +11,7 @@ const initialState = {
   content: [],
   steps: [],
   video_uris: {},
+  cached_video_paths: {},
 };
 
 const homeScreen = (state = initialState, action) => {
@@ -40,6 +42,13 @@ const homeScreen = (state = initialState, action) => {
       return {
         ...state,
         video_uris: video_uris,
+      };
+    }
+    case ADD_CACHED_VIDEO_PATH: {
+      const videoPathObject = action.payload;
+      return {
+        ...state,
+        cached_video_paths: {...state.cached_video_paths, ...videoPathObject},
       };
     }
     default: {
