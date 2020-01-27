@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {useSelector} from 'react-redux';
-import convertToProxyURL from 'react-native-video-cache';
+import {useSelector, useDispatch} from 'react-redux';
+
 import {
   StyleSheet,
   View,
@@ -20,46 +20,60 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   getContentOwnStepsSorted,
   getContentOwnVideoUri,
+  getContentOwnCachedVideoPath,
 } from './../redux/selectors';
+import {genCachedUri} from './../redux/actions';
+
+const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
+const DEFAULT_SPEED = 1.0;
+const PROGRESS_BAR_WIDTH = 250;
+const BASE_URI = 'https://ttkd-test-s3.s3.amazonaws.com/ttkd';
 
 const secondsToTime = time => {
   return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
 };
-const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
-const DEFAULT_SPEED = 1.0;
 
-const PROGRESS_BAR_WIDTH = 250;
-const BASE_URI = 'https://ttkd-test-s3.s3.amazonaws.com/ttkd';
+const createFullVideoUri = videoPath => `${BASE_URI}/${videoPath}`;
 
 const VideoWithControls = props => {
+  const dispatch = useDispatch();
+
+  /////////// Props/Navigation access////////////////
   const contentId =
     (props.navigation && props.navigation.getParam('contentId')) ||
     props.contentId;
+  const recordedVideo =
+    props.navigation && props.navigation.getParam('recordedVideo');
 
+  ////////////////// Selector Access /////////////////////
   const steps = useSelector(state =>
     getContentOwnStepsSorted(state, contentId),
   );
   const contentVideoUri = useSelector(state =>
     getContentOwnVideoUri(state, contentId),
   );
+  const cachedVideoPath = useSelector(state =>
+    getContentOwnCachedVideoPath(state, contentId),
+  );
 
-  const recordedVideo =
-    props.navigation && props.navigation.getParam('recordedVideo');
-
+  //////////////// State ////////////////////////
   const [paused, setPaused] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
-  const [proxyUri, setProxyUri] = useState(null);
-  const fullContentVideoUri = `${BASE_URI}/${contentVideoUri}`;
+
+  //Remove and do it a better way
+  const [currentStepIndex, setCurrentStepIndex] = useState(1);
+
+  ///////////////////// Effects /////////////////////
+  useEffect(() => {
+    flatListRef.current &&
+      flatListRef.current.scrollToIndex({index: currentStepIndex});
+  }, [currentStepIndex]);
 
   useEffect(() => {
-    const genProxyUri = async () => {
-      await convertToProxyURL(fullContentVideoUri).then(res =>
-        setProxyUri(res),
-      );
-    };
-    genProxyUri();
+    !cachedVideoPath &&
+      dispatch(genCachedUri(contentId, createFullVideoUri(contentVideoUri)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -69,23 +83,23 @@ const VideoWithControls = props => {
     }
   }, [props.isFocused]);
 
+  ////////////////// Helper Methods ////////////////////
+
   const handleLoad = meta => {
     setDuration(meta.duration);
     props.setVideoLength && props.setVideoLength(meta.duration);
   };
+
   const handlePlayPausePress = () => {
-    if (progress >= 1) {
-      contentVideoRef.current.seek(0);
-      recordedVideoRef.current && recordedVideoRef.current.seek(0);
-    }
+    progress >= 1 && Object.values(videoRefs).map(ref => ref.current.seek(0));
     setPaused(!paused);
   };
+
   const handleProgressPress = e => {
     const progressBarPosition = e.nativeEvent.locationX;
     const seekTime = (progressBarPosition / PROGRESS_BAR_WIDTH) * duration;
 
-    contentVideoRef.current.seek(seekTime);
-    recordedVideoRef.current && recordedVideoRef.current.seek(seekTime);
+    Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
   };
   const handleProgress = curProgress => {
     setProgress(curProgress.currentTime / duration);
@@ -101,17 +115,57 @@ const VideoWithControls = props => {
     setProgress(1);
   };
 
-  const handleStepPress = stepTime => {
-    contentVideoRef.current.seek(stepTime);
-    recordedVideoRef.current && recordedVideoRef.current.seek(stepTime);
-  };
+  const handleStepPress = stepTime =>
+    Object.values(videoRefs).map(ref => ref.current.seek(stepTime));
 
   const {width} = Dimensions.get('window');
   const videoHeight = width * 0.5265;
   const fullHeight = recordedVideo ? videoHeight * 2 : videoHeight;
 
-  const recordedVideoRef = useRef(null);
-  const contentVideoRef = useRef(null);
+  const recordedVideoRef = useRef();
+  const videoRefs = {
+    contentVideoRef: useRef(),
+    ...(recordedVideo ? {recordedVideoRef: recordedVideoRef} : {}),
+  };
+  const flatListRef = useRef();
+
+  ///////////////////////////// Render Code //////////////////////////////
+
+  const renderSteps = (
+    <View style={styles.steps}>
+      <FlatList
+        onScrollToIndexFailed={error => {
+          console.info('onScrollToIndex failed', error);
+        }}
+        ref={flatListRef}
+        data={steps}
+        keyExtractor={step => `${step.id}`}
+        renderItem={({item, index}) => {
+          const progressSeconds = Math.round(progress * duration);
+          const isCurrentStep =
+            (!item.start_time || item.start_time <= progressSeconds) &&
+            (!item.end_time || item.end_time > progressSeconds);
+          isCurrentStep &&
+            index !== currentStepIndex &&
+            setCurrentStepIndex(index);
+          return (
+            <TouchableOpacity
+              onPress={() => handleStepPress(item.start_time || 0)}>
+              <View
+                style={[
+                  styles.step,
+                  isCurrentStep ? styles.currentStep : null,
+                ]}>
+                <Text style={styles.stepText}>
+                  {`${index + 1}: ${item.description}`}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -126,14 +180,14 @@ const VideoWithControls = props => {
                 rate={rate}
                 resizeMode="contain"
                 onEnd={handleEnd}
-                ref={recordedVideoRef}
+                ref={videoRefs.recordedVideoRef}
                 style={{height: videoHeight, width: '100%'}}
               />
             )}
-            {proxyUri && (
+            {cachedVideoPath && (
               <Video
                 source={{
-                  uri: proxyUri,
+                  uri: cachedVideoPath,
                 }}
                 paused={paused}
                 rate={rate}
@@ -152,7 +206,7 @@ const VideoWithControls = props => {
                 onError={e => console.error('ERROR: ', e)}
                 onProgress={handleProgress}
                 onEnd={handleEnd}
-                ref={contentVideoRef}
+                ref={videoRefs.contentVideoRef}
                 style={{height: videoHeight, width: '100%'}}
               />
             )}
@@ -187,39 +241,14 @@ const VideoWithControls = props => {
           <Text style={styles.controlsText}>{`${rate}x`}</Text>
         </TouchableWithoutFeedback>
       </View>
-      {/* Steps */}
-      <View style={styles.steps}>
-        <FlatList
-          data={steps}
-          keyExtractor={step => `${step.id}`}
-          renderItem={({item}) => {
-            const progressSeconds = Math.round(progress * duration);
-            const isCurrentStep =
-              (!item.start_time || item.start_time <= progressSeconds) &&
-              (!item.end_time || item.end_time > progressSeconds);
-            return (
-              <TouchableOpacity
-                onPress={() => handleStepPress(item.start_time || 0)}>
-                <View
-                  style={[
-                    styles.step,
-                    isCurrentStep ? styles.currentStep : null,
-                  ]}>
-                  <Text style={styles.stepText}>
-                    {`\u2022 ${item.description}`}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </View>
+      {renderSteps}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -234,7 +263,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   steps: {
+    height: 50,
     width: '100%',
+    flex: 1,
     justifyContent: 'flex-start',
   },
   step: {
