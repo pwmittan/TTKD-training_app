@@ -37,8 +37,6 @@ target 'TTKDTrainingApp' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
 
-  pod 'react-native-video-cache', :path => '../node_modules/react-native-video-cache'
-
   target 'TTKDTrainingAppTests' do
     inherit! :search_paths
     # Pods for testing

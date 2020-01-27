@@ -1,4 +1,3 @@
-import convertToProxyURL from 'react-native-video-cache';
 import {
   ADD_RECORDED_VIDEO,
   SET_CATEGORIES,
@@ -86,9 +85,9 @@ const setVideoUris = videoUris => {
 
 export const genCachedUri = (contentId, videoUri) => {
   return dispatch => {
-    convertToProxyURL(videoUri).then(res =>
-      dispatch(addCachedVideoPath({[contentId]: res})),
-    );
+    // (videoUri).then(res =>
+    //   dispatch(addCachedVideoPath({[contentId]: res})),
+    // );
   };
 };
 
