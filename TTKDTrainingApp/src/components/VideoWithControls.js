@@ -9,6 +9,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
@@ -59,6 +60,7 @@ const VideoWithControls = props => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
+  const [buffering, setBuffering] = useState(true);
 
   //Remove and do it a better way
   const [currentStepIndex, setCurrentStepIndex] = useState(1);
@@ -86,6 +88,7 @@ const VideoWithControls = props => {
   const handleLoad = meta => {
     setDuration(meta.duration);
     props.setVideoLength && props.setVideoLength(meta.duration);
+    setBuffering(false);
   };
 
   const handlePlayPausePress = () => {
@@ -100,6 +103,7 @@ const VideoWithControls = props => {
     Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
   };
   const handleProgress = curProgress => {
+    buffering && setBuffering(false);
     setProgress(curProgress.currentTime / duration);
   };
   const handleRateTouch = () =>
@@ -190,8 +194,8 @@ const VideoWithControls = props => {
                 paused={paused}
                 rate={rate}
                 onBuffer={() => {
-                  console.info('buffering!');
-                  setPaused(true);
+                  console.info('Buffering!');
+                  setBuffering(true);
                 }}
                 // bufferConfig={{
                 //   minBufferMs: 15000,
@@ -240,6 +244,12 @@ const VideoWithControls = props => {
         </TouchableWithoutFeedback>
       </View>
       {renderSteps}
+      {/* Buffering View */}
+      <ActivityIndicator
+        style={{top: fullHeight / 2 - 16, ...styles.activityIndicator}}
+        animating={buffering}
+        size="large"
+      />
     </View>
   );
 };
@@ -263,6 +273,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 8,
   },
+  controlsText: {
+    color: 'rgb(255,255,255)',
+  },
   steps: {
     height: 50,
     width: '100%',
@@ -279,8 +292,8 @@ const styles = StyleSheet.create({
   stepText: {
     fontSize: 16,
   },
-  controlsText: {
-    color: 'rgb(255,255,255)',
+  activityIndicator: {
+    position: 'absolute',
   },
 });
 
