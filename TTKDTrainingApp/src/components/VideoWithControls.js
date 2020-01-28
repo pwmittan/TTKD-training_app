@@ -60,7 +60,7 @@ const VideoWithControls = props => {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
-  const [buffering, setBuffering] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   //Remove and do it a better way
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -90,7 +90,7 @@ const VideoWithControls = props => {
   const handleLoad = meta => {
     setDuration(meta.duration);
     props.setVideoLength && props.setVideoLength(meta.duration);
-    setBuffering(false);
+    setLoading(false);
     console.info('Finished loading');
   };
 
@@ -106,7 +106,7 @@ const VideoWithControls = props => {
     Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
   };
   const handleProgress = curProgress => {
-    buffering && setBuffering(false);
+    loading && setLoading(false);
     setProgress(curProgress.currentTime / duration);
   };
   const handleRateTouch = () =>
@@ -199,8 +199,8 @@ const VideoWithControls = props => {
                 // Because we are downloading and caching videos, there should realistically
                 // never be a time where the video needs to buffer
                 // onBuffer={() => {
-                //   console.info('Buffering!');
-                //   setBuffering(true);
+                //   console.info('Loading!');
+                //   setLoading(true);
                 // }}
                 // bufferConfig={{
                 //   minBufferMs: 15000,
@@ -249,10 +249,10 @@ const VideoWithControls = props => {
         </TouchableWithoutFeedback>
       </View>
       {renderSteps}
-      {/* Buffering View */}
+      {/* Loading Indicator */}
       <ActivityIndicator
         style={{top: fullHeight / 2 - 16, ...styles.activityIndicator}}
-        animating={buffering}
+        animating={loading}
         size="large"
       />
     </View>
