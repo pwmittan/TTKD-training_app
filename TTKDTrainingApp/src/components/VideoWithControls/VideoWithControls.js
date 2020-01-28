@@ -82,8 +82,10 @@ const VideoWithControls = props => {
   ////////////////// Helper Methods ////////////////////
 
   const handleLoad = meta => {
+    // Should be removed when video_length is added to db schema
     setDuration(meta.duration);
     props.setVideoLength && props.setVideoLength(meta.duration);
+
     setLoading(false);
     console.info('Finished loading');
   };
@@ -93,12 +95,6 @@ const VideoWithControls = props => {
     setPaused(!paused);
   };
 
-  const handleProgressPress = e => {
-    const progressBarPosition = e.nativeEvent.locationX;
-    const seekTime = (progressBarPosition / PROGRESS_BAR_WIDTH) * duration;
-
-    Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
-  };
   const handleProgress = curProgress => {
     loading && setLoading(false);
     setProgress(curProgress.currentTime / duration);
@@ -173,7 +169,6 @@ const VideoWithControls = props => {
                 paused={paused}
                 rate={rate}
                 resizeMode="contain"
-                onEnd={handleEnd}
                 ref={videoRefs.recordedVideoRef}
                 style={{height: videoHeight, ...styles.video}}
               />
@@ -209,13 +204,12 @@ const VideoWithControls = props => {
           </View>
         </TouchableWithoutFeedback>
       </View>
-      {/* Controls */}
       <Controls
+        videoRefs={videoRefs}
         paused={paused}
         handlePlayPausePress={handlePlayPausePress}
         duration={duration}
         progress={progress}
-        handleProgressPress={handleProgressPress}
         rate={rate}
         setRate={setRate}
       />

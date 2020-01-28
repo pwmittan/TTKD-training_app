@@ -13,14 +13,21 @@ const secondsToTime = time => {
 
 const Controls = props => {
   const {
+    videoRefs,
     paused,
     handlePlayPausePress,
     duration,
     progress,
-    handleProgressPress,
     rate,
     setRate,
   } = props;
+
+  const handleProgressPress = e => {
+    const progressBarPosition = e.nativeEvent.locationX;
+    const seekTime = (progressBarPosition / PROGRESS_BAR_WIDTH) * duration;
+
+    Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
+  };
 
   const handleRateTouch = () =>
     setRate(
