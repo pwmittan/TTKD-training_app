@@ -63,13 +63,15 @@ const VideoWithControls = props => {
   const [buffering, setBuffering] = useState(true);
 
   //Remove and do it a better way
-  const [currentStepIndex, setCurrentStepIndex] = useState(1);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
   ///////////////////// Effects /////////////////////
   useEffect(() => {
-    flatListRef.current &&
+    Array.isArray(steps) &&
+      steps.length &&
+      flatListRef.current &&
       flatListRef.current.scrollToIndex({index: currentStepIndex});
-  }, [currentStepIndex]);
+  }, [steps, currentStepIndex]);
 
   useEffect(() => {
     !cachedVideoPath &&
@@ -89,6 +91,7 @@ const VideoWithControls = props => {
     setDuration(meta.duration);
     props.setVideoLength && props.setVideoLength(meta.duration);
     setBuffering(false);
+    console.info('Finished loading');
   };
 
   const handlePlayPausePress = () => {
@@ -193,10 +196,12 @@ const VideoWithControls = props => {
                 }}
                 paused={paused}
                 rate={rate}
-                onBuffer={() => {
-                  console.info('Buffering!');
-                  setBuffering(true);
-                }}
+                // Because we are downloading and caching videos, there should realistically
+                // never be a time where the video needs to buffer
+                // onBuffer={() => {
+                //   console.info('Buffering!');
+                //   setBuffering(true);
+                // }}
                 // bufferConfig={{
                 //   minBufferMs: 15000,
                 //   maxBufferMs: 50000,
@@ -205,7 +210,7 @@ const VideoWithControls = props => {
                 // }}
                 resizeMode="contain"
                 onLoad={handleLoad}
-                onError={e => console.error('ERROR: ', e)}
+                onError={e => console.info('Error on Video', e)}
                 onProgress={handleProgress}
                 onEnd={handleEnd}
                 ref={videoRefs.contentVideoRef}
