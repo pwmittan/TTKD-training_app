@@ -15,24 +15,18 @@ import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
 import Video from 'react-native-video';
-import ProgressBar from 'react-native-progress/Bar';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
+import Controls from './Controls';
 import {
   getContentOwnStepsSorted,
   getContentOwnVideoUri,
   getContentOwnCachedVideoPath,
-} from './../redux/selectors';
-import {genCachedUri} from './../redux/actions';
+} from '../../redux/selectors';
+import {genCachedUri} from '../../redux/actions';
+import {PROGRESS_BAR_WIDTH} from './constants';
 
-const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
 const DEFAULT_SPEED = 1.0;
-const PROGRESS_BAR_WIDTH = 250;
 const BASE_URI = 'https://ttkd-test-s3.s3.amazonaws.com/ttkd';
-
-const secondsToTime = time => {
-  return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
-};
 
 const VideoWithControls = props => {
   const dispatch = useDispatch();
@@ -109,12 +103,7 @@ const VideoWithControls = props => {
     loading && setLoading(false);
     setProgress(curProgress.currentTime / duration);
   };
-  const handleRateTouch = () =>
-    setRate(
-      RATES[
-        (RATES.findIndex(listRate => listRate === rate) + 1) % RATES.length
-      ],
-    );
+
   const handleEnd = () => {
     setPaused(true);
     setProgress(1);
@@ -221,33 +210,15 @@ const VideoWithControls = props => {
         </TouchableWithoutFeedback>
       </View>
       {/* Controls */}
-      <View style={styles.controls}>
-        <TouchableWithoutFeedback onPress={handlePlayPausePress}>
-          <Icon
-            name={!paused ? 'pause' : 'play'}
-            size={30}
-            color="rgb(255,255,255)"
-          />
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={handleProgressPress}>
-          <View>
-            <ProgressBar
-              progress={progress}
-              color="rgb(255,255,255)"
-              unfilledColor="rgba(255,255,255,0.5)"
-              borderColor="rgb(255,255,255)"
-              width={PROGRESS_BAR_WIDTH}
-              height={20}
-            />
-          </View>
-        </TouchableWithoutFeedback>
-        <Text style={styles.controlsText}>
-          {secondsToTime(Math.floor(progress * duration))}
-        </Text>
-        <TouchableWithoutFeedback onPress={handleRateTouch}>
-          <Text style={styles.controlsText}>{`${rate}x`}</Text>
-        </TouchableWithoutFeedback>
-      </View>
+      <Controls
+        paused={paused}
+        handlePlayPausePress={handlePlayPausePress}
+        duration={duration}
+        progress={progress}
+        handleProgressPress={handleProgressPress}
+        rate={rate}
+        setRate={setRate}
+      />
       {renderSteps}
       {/* Loading Indicator */}
       <ActivityIndicator
@@ -269,18 +240,7 @@ const styles = StyleSheet.create({
   video: {
     width: '100%',
   },
-  controls: {
-    width: '100%',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-  },
-  controlsText: {
-    color: 'rgb(255,255,255)',
-  },
+
   steps: {
     height: 50,
     width: '100%',
