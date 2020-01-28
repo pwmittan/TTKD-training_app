@@ -89,8 +89,8 @@ export const genCachedUri = (contentId, directoryUri, videoUri) => {
     const filePath = `${RNFS.DocumentDirectoryPath}/${videoUri}`;
     RNFS.exists(filePath).then(exists => {
       if (exists) {
-        console.info('File already Exists, adding to Redux Store', filePath);
-        dispatch(addCachedVideoPath({[contentId]: filePath}));
+        console.info('File already exists, adding to Redux Store', filePath);
+        dispatch(addCachedVideoPath({[contentId]: `file://${filePath}`}));
       } else {
         RNFS.downloadFile({
           fromUrl: `${directoryUri}/${videoUri}`,
@@ -103,7 +103,7 @@ export const genCachedUri = (contentId, directoryUri, videoUri) => {
               res,
               filePath,
             );
-            dispatch(addCachedVideoPath({[contentId]: filePath}));
+            dispatch(addCachedVideoPath({[contentId]: `file://${filePath}`}));
           })
           .catch(err => {
             console.info('Error downloading file', err);
