@@ -1,11 +1,10 @@
 import React from 'react';
+
 import {View, TouchableWithoutFeedback, Text, StyleSheet} from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {PROGRESS_BAR_WIDTH} from './constants';
-
-const RATES = [0.25, 0.5, 1.0, 1.25, 1.5, 2.0];
+import {PROGRESS_BAR_WIDTH, RATES} from './constants';
 
 const secondsToTime = time => {
   return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
