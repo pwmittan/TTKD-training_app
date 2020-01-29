@@ -5,6 +5,7 @@ import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
+import ContentVideo from './VideoWithControls/ContentVideo';
 import Countdown from './Countdown';
 import {addRecordedVideo} from './../redux/actions';
 
@@ -19,6 +20,9 @@ const ReactCamera = props => {
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [recording, setRecording] = useState(false);
   const [recordedVideo, setRecordedVideo] = useState(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoHeight, setVideoHeight] = useState(0);
+  const [videoWidth, setVideoWidth] = useState(0);
 
   // Handles starting recording
   useEffect(() => {
@@ -70,10 +74,30 @@ const ReactCamera = props => {
     }
   }, [maxLength]);
 
-  const button = (
+  const handleLoad = response => {
+    const maxDim = 300;
+    const {height, width, orientation} = response.naturalSize;
+    const isPortrait = orientation === 'portrait';
+    const calcHeight = isPortrait
+      ? maxDim
+      : Math.round((height * maxDim) / width);
+    const calcWidth = isPortrait
+      ? Math.round((width * maxDim) / height)
+      : maxDim;
+    setVideoHeight(calcHeight);
+    setVideoWidth(calcWidth);
+    setVideoLoaded(true);
+    console.info('Finished loading');
+  };
+
+  const recordButton = (
     <TouchableOpacity
       onPress={() => setShouldShowCountdown(true)}
-      style={styles.capture}>
+      disabled={!videoLoaded}
+      style={{
+        ...styles.capture,
+        ...(videoLoaded ? null : styles.disabledButton),
+      }}>
       <Text style={styles.text}> RECORD </Text>
     </TouchableOpacity>
   );
@@ -102,8 +126,23 @@ const ReactCamera = props => {
           //   buttonNegative: 'Cancel',
           // }}
         />
+        <View
+          style={{
+            ...styles.video,
+            ...(recording ? null : styles.hideVideo),
+            height: videoHeight,
+            width: videoWidth,
+          }}>
+          <ContentVideo
+            contentId={contentId}
+            paused={!recording}
+            handleLoad={handleLoad}
+            videoHeight={videoHeight}
+            videoWidth={videoWidth}
+          />
+        </View>
         {!recording && !shouldShowCountdown && (
-          <View style={styles.button}>{button}</View>
+          <View style={styles.button}>{recordButton}</View>
         )}
         {shouldShowCountdown && (
           <View style={styles.countdown}>
@@ -155,6 +194,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 20,
   },
+  disabledButton: {
+    opacity: 0.3,
+  },
   button: {
     position: 'absolute',
     bottom: 50,
@@ -162,6 +204,14 @@ const styles = StyleSheet.create({
     flex: 0,
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  video: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  hideVideo: {
+    opacity: 0,
   },
   countdown: {
     position: 'absolute',
