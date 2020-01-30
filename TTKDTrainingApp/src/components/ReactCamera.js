@@ -4,6 +4,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ContentVideo from './VideoWithControls/ContentVideo';
 import Countdown from './Countdown';
@@ -19,6 +20,8 @@ const ReactCamera = props => {
 
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [frontCamera, setFrontCamera] = useState(true);
+
   const [recordedVideo, setRecordedVideo] = useState(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoHeight, setVideoHeight] = useState(0);
@@ -110,7 +113,11 @@ const ReactCamera = props => {
         <RNCamera
           ref={cameraRef}
           style={styles.preview}
-          type={RNCamera.Constants.Type.back}
+          type={
+            frontCamera
+              ? RNCamera.Constants.Type.front
+              : RNCamera.Constants.Type.back
+          }
           flashMode={RNCamera.Constants.FlashMode.off}
           captureAudio={false}
           androidCameraPermissionOptions={{
@@ -141,6 +148,13 @@ const ReactCamera = props => {
             videoWidth={videoWidth}
           />
         </View>
+        {!shouldShowCountdown && !recording && (
+          <TouchableOpacity
+            style={styles.swapCameraButton}
+            onPress={() => setFrontCamera(!frontCamera)}>
+            <Icon name="refresh" size={24} color="rgb(255,255,255)" />
+          </TouchableOpacity>
+        )}
         {!recording && !shouldShowCountdown && (
           <View style={styles.button}>{recordButton}</View>
         )}
@@ -212,6 +226,11 @@ const styles = StyleSheet.create({
   },
   hideVideo: {
     opacity: 0,
+  },
+  swapCameraButton: {
+    position: 'absolute',
+    top: 10,
+    right: 20,
   },
   countdown: {
     position: 'absolute',
