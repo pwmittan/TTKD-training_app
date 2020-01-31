@@ -27,11 +27,17 @@ const ReactCamera = props => {
   const [videoHeight, setVideoHeight] = useState(0);
   const [videoWidth, setVideoWidth] = useState(0);
 
+  // Ref to store previous recording state in order to prevent calling
+  //  startRecording() more than once
+  const prevRecording = useRef(false);
+  const cameraRef = useRef();
+
   // Handles starting recording
   useEffect(() => {
-    if (recording === true) {
+    if (!prevRecording.current && recording === true) {
       startRecording();
     }
+    prevRecording.current = recording;
   }, [recording, startRecording]);
 
   // Handles stopping video if back button is pressed
@@ -104,8 +110,6 @@ const ReactCamera = props => {
       <Text style={styles.text}> RECORD </Text>
     </TouchableOpacity>
   );
-
-  const cameraRef = useRef(null);
 
   return (
     isFocused && (
