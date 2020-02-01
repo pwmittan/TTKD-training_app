@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 HomeScreen.navigationOptions = ({navigation}) => {
   const category = navigation.getParam('category') || null;
   return {
-    title: category ? category.title : 'TTKD Home',
+    title: category ? category.category_name : 'TTKD Home',
   };
 };
 export default HomeScreen;
