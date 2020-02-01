@@ -4,7 +4,7 @@ import {
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
-  SET_VIDEO_URIS,
+  SET_VIDEO_PATHS,
   ADD_CACHED_VIDEO_PATH,
 } from './actionTypes';
 
@@ -44,7 +44,7 @@ export const setHomeScreenData = () => {
         dispatch(setCategories(data.categories));
         dispatch(setContent(data.content));
         dispatch(setSteps(data.steps));
-        //dispatch(presignVideoUris(data.content));
+        //dispatch(presignVideoPaths(data.content));
       })
       .catch(console.info);
   };
@@ -56,7 +56,7 @@ export const setHomeScreenData = () => {
 const presignVideoUris = content => {
   return dispatch => {
     const videoPaths = content.reduce((allVals, currVal) => {
-      return {...allVals, [currVal.id]: currVal.video_uri};
+      return {...allVals, [currVal.id]: currVal.video_path};
     }, {});
     const url = new URL(
       'https://g4o9el325j.execute-api.us-east-1.amazonaws.com/TestS3PresignUrl',
@@ -72,28 +72,28 @@ const presignVideoUris = content => {
     );
     fetch(url)
       .then(res => res.json())
-      .then(data => dispatch(setVideoUris(data)));
+      .then(data => dispatch(setVideoPaths(data)));
     console.info("Loaded Presigned URL's");
   };
 };
 
-const setVideoUris = videoUris => {
+const setVideoPaths = videoPaths => {
   return {
-    type: SET_VIDEO_URIS,
-    payload: videoUris,
+    type: SET_VIDEO_PATHS,
+    payload: videoPaths,
   };
 };
 
-export const genCachedUri = (contentId, directoryUri, videoUri) => {
+export const genCachedUri = (contentId, directoryUri, videoPath) => {
   return dispatch => {
-    const filePath = `${RNFS.DocumentDirectoryPath}/${videoUri}`;
+    const filePath = `${RNFS.DocumentDirectoryPath}/${videoPath}`;
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);
         dispatch(addCachedVideoPath({[contentId]: `file://${filePath}`}));
       } else {
         RNFS.downloadFile({
-          fromUrl: `${directoryUri}/${videoUri}`,
+          fromUrl: `${directoryUri}/${videoPath}`,
           toFile: filePath,
           background: true,
         })
