@@ -10,7 +10,7 @@ export const getRecordedVideosForContent = (store, contentId) =>
 const getAllCategories = store => getHomeScreenState(store).categories;
 const getAllContent = store => getHomeScreenState(store).content;
 const getAllSteps = store => getHomeScreenState(store).steps;
-const getAllVideoUris = store => getHomeScreenState(store).video_uris;
+const getAllVideoUris = store => getHomeScreenState(store).video_paths;
 const getAllCachedVideoPaths = store =>
   getHomeScreenState(store).cached_video_paths;
 
@@ -28,7 +28,7 @@ export const getContentFromId = (store, contentId) =>
 
 export const getContentOwnVideoUri = (store, contentId = -1) => {
   const content = getContentFromId(store, contentId);
-  return content && content.video_uri;
+  return content && content.video_path;
 };
 
 export const getContentVideoUri = (store, contentId) =>
