@@ -5,6 +5,7 @@ import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Orientation from 'react-native-orientation-locker';
 
 import ContentVideo from './VideoWithControls/ContentVideo';
 import Countdown from './Countdown';
@@ -39,6 +40,17 @@ const ReactCamera = props => {
     }
     prevRecording.current = recording;
   }, [recording, startRecording]);
+
+  useEffect(() => {
+    isFocused && Orientation.lockToLandscape();
+    !isFocused && Orientation.lockToPortrait();
+    !isFocused && Orientation.unlockAllOrientations();
+
+    return () => {
+      Orientation.lockToPortrait();
+      Orientation.unlockAllOrientations();
+    };
+  }, [isFocused]);
 
   // Handles stopping video if back button is pressed
   useEffect(() => {

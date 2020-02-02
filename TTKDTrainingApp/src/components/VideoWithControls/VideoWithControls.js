@@ -11,6 +11,7 @@ import {withNavigationFocus} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
 import Video from 'react-native-video';
+import Orientation from 'react-native-orientation-locker';
 
 import Controls from './Controls';
 import ContentVideo from './ContentVideo';
@@ -33,6 +34,8 @@ const VideoWithControls = props => {
   const [rate, setRate] = useState(DEFAULT_SPEED);
   const [loading, setLoading] = useState(true);
 
+  const [width, setWidth] = useState(Dimensions.get('window').width);
+
   ///////////////////// Effects /////////////////////
 
   useEffect(() => {
@@ -40,6 +43,15 @@ const VideoWithControls = props => {
       setPaused(true);
     }
   }, [props.isFocused]);
+
+  useEffect(() => {
+    Orientation.getOrientation(orientation => {
+      if (orientation === 'PORTRAIT') {
+        const window = Dimensions.get('window');
+        setWidth(Math.min(window.height, window.width));
+      }
+    });
+  });
 
   ////////////////// Helper Methods ////////////////////
 
@@ -67,7 +79,6 @@ const VideoWithControls = props => {
     setProgress(1);
   };
 
-  const {width} = Dimensions.get('window');
   const videoHeight = width * 0.5265;
   const fullHeight = recordedVideo ? videoHeight * 2 : videoHeight;
 
