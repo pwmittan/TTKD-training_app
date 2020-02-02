@@ -2,13 +2,8 @@ import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import Video from 'react-native-video';
 
-import {
-  getContentOwnVideoUri,
-  getContentOwnCachedVideoPath,
-} from '../../redux/selectors';
+import {getContentOwnCachedVideoPath} from '../../redux/selectors';
 import {genCachedUri} from '../../redux/actions';
-
-import {BASE_URI} from './constants';
 
 const ContentVideo = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
@@ -23,16 +18,12 @@ const ContentVideo = React.forwardRef((props, ref) => {
     videoWidth,
   } = props;
 
-  const contentVideoUri = useSelector(state =>
-    getContentOwnVideoUri(state, contentId),
-  );
   const cachedVideoPath = useSelector(state =>
     getContentOwnCachedVideoPath(state, contentId),
   );
 
   useEffect(() => {
-    !cachedVideoPath &&
-      dispatch(genCachedUri(contentId, BASE_URI, contentVideoUri));
+    !cachedVideoPath && dispatch(genCachedUri(contentId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

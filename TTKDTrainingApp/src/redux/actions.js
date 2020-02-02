@@ -7,6 +7,8 @@ import {
   SET_VIDEO_URIS,
   ADD_CACHED_VIDEO_PATH,
 } from './actionTypes';
+import {getContentFromId} from './selectors';
+import {fetchAppData, BASE_S3_URI} from '../api/API';
 
 export const addRecordedVideo = video => {
   return {
@@ -36,9 +38,7 @@ export const setSteps = steps => {
 
 export const setHomeScreenData = () => {
   return dispatch => {
-    fetch(
-      'https://sfjy3c2yji.execute-api.us-east-1.amazonaws.com/TestDBFetchall',
-    )
+    fetchAppData()
       .then(res => res.json())
       .then(data => {
         dispatch(setCategories(data.categories));
@@ -84,16 +84,17 @@ const setVideoUris = videoUris => {
   };
 };
 
-export const genCachedUri = (contentId, directoryUri, videoUri) => {
-  return dispatch => {
-    const filePath = `${RNFS.DocumentDirectoryPath}/${videoUri}`;
+export const genCachedUri = contentId => {
+  return (dispatch, getState) => {
+    const {title, video_uri} = getContentFromId(getState(), contentId);
+    const filePath = `${RNFS.DocumentDirectoryPath}/${video_uri}`;
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);
         dispatch(addCachedVideoPath({[contentId]: `file://${filePath}`}));
       } else {
         RNFS.downloadFile({
-          fromUrl: `${directoryUri}/${videoUri}`,
+          fromUrl: `${BASE_S3_URI}/${title}/${video_uri}`,
           toFile: filePath,
           background: true,
         })
