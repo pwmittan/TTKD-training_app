@@ -17,12 +17,13 @@ const ReactCamera = props => {
   const contentId = navigation.getParam('contentId');
   const maxLength = navigation.getParam('maxLength');
 
-  const [shouldCancelVideo, setShouldCancelVideo] = useState(false);
-  const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [shouldKeepVideo, setShouldKeepVideo] = useState(true);
+  const [recordedVideo, setRecordedVideo] = useState(null);
+
+  const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [frontCamera, setFrontCamera] = useState(true);
 
-  const [recordedVideo, setRecordedVideo] = useState(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoHeight, setVideoHeight] = useState(0);
   const [videoWidth, setVideoWidth] = useState(0);
@@ -36,36 +37,8 @@ const ReactCamera = props => {
   useEffect(() => {
     if (!prevRecording.current && recording === true) {
       startRecording();
-    }
-    prevRecording.current = recording;
-  }, [recording, startRecording]);
-
-  useEffect(() => {
-    isFocused && Orientation.lockToLandscape();
-    !isFocused && Orientation.lockToPortrait();
-    !isFocused && Orientation.unlockAllOrientations();
-
-    return () => {
-      Orientation.lockToPortrait();
-      Orientation.unlockAllOrientations();
-    };
-  }, [isFocused]);
-
-  // Handles stopping video if back button is pressed
-  useEffect(() => {
-    if (recording) {
-      shouldCancelVideo &&
-        cameraRef.current &&
-        cameraRef.current.stopRecording();
-    } else {
-      shouldCancelVideo && navigation.goBack();
-    }
-  }, [shouldCancelVideo, navigation, recording]);
-
-  // Handles dispatching video and navigation once recording is stopped
-  useEffect(() => {
-    if (recordedVideo) {
-      if (!shouldCancelVideo) {
+    } else if (prevRecording.current && !recording) {
+      if (shouldKeepVideo) {
         dispatch(addRecordedVideo({...recordedVideo, contentId}));
         navigation.navigate('VideoWithControls', {
           recordedVideo: recordedVideo,
@@ -75,19 +48,46 @@ const ReactCamera = props => {
         navigation.goBack();
       }
     }
-  }, [shouldCancelVideo, recordedVideo, contentId, dispatch, navigation]);
+    prevRecording.current = recording;
+  }, [
+    contentId,
+    dispatch,
+    navigation,
+    recordedVideo,
+    recording,
+    shouldKeepVideo,
+    startRecording,
+  ]);
+
+  useEffect(() => {
+    isFocused && Orientation.lockToLandscape();
+    !isFocused && Orientation.lockToPortrait();
+    !isFocused && Orientation.unlockAllOrientations();
+  }, [isFocused]);
+
+  const backButtonPress = () => {
+    if (recording) {
+      setShouldKeepVideo(false);
+      cameraRef.current && cameraRef.current.stopRecording();
+    } else {
+      navigation.goBack();
+    }
+  };
 
   const startRecording = useCallback(async () => {
     // default to mp4 for android as codec is not set
     try {
       if (cameraRef.current) {
-        const video = await cameraRef.current.recordAsync({
-          mute: true,
-          maxDuration: maxLength,
-        });
+        await cameraRef.current
+          .recordAsync({
+            mute: true,
+            maxDuration: maxLength,
+          })
+          .then(video => {
+            setRecordedVideo(video);
+          });
 
         setRecording(false);
-        setRecordedVideo(video);
       }
     } catch (e) {
       console.error('Recording Failed', e);
@@ -110,16 +110,44 @@ const ReactCamera = props => {
     console.info('Finished loading');
   };
 
-  const recordButton = (
-    <TouchableOpacity
-      onPress={() => setShouldShowCountdown(true)}
-      disabled={!videoLoaded}
-      style={{
-        ...styles.capture,
-        ...(videoLoaded ? null : styles.disabledButton),
-      }}>
-      <Text style={styles.text}> RECORD </Text>
+  const backButton = (
+    <TouchableOpacity style={styles.backButton} onPress={backButtonPress}>
+      <Icon name="md-arrow-back" size={24} color="rgb(255,255,255)" />
     </TouchableOpacity>
+  );
+
+  const swapCameraButton = (
+    <TouchableOpacity
+      style={styles.swapCameraButton}
+      onPress={() => setFrontCamera(!frontCamera)}>
+      <Icon name="md-sync" size={24} color="rgb(255,255,255)" />
+    </TouchableOpacity>
+  );
+
+  const recordButton = (
+    <View style={styles.button}>
+      <TouchableOpacity
+        onPress={() => setShouldShowCountdown(true)}
+        disabled={!videoLoaded}
+        style={{
+          ...styles.capture,
+          ...(videoLoaded ? null : styles.disabledButton),
+        }}>
+        <Text style={styles.text}> RECORD </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const countdown = (
+    <View style={styles.countdown}>
+      <Countdown
+        countdownTime={5}
+        countdownFinished={() => {
+          setShouldShowCountdown(false);
+          setRecording(true);
+        }}
+      />
+    </View>
   );
 
   return (
@@ -163,32 +191,14 @@ const ReactCamera = props => {
             videoWidth={videoWidth}
           />
         </View>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setShouldCancelVideo(true)}>
-          <Icon name="md-arrow-back" size={24} color="rgb(255,255,255)" />
-        </TouchableOpacity>
+        {backButton}
         {!shouldShowCountdown && !recording && (
-          <TouchableOpacity
-            style={styles.swapCameraButton}
-            onPress={() => setFrontCamera(!frontCamera)}>
-            <Icon name="md-sync" size={24} color="rgb(255,255,255)" />
-          </TouchableOpacity>
+          <React.Fragment>
+            {swapCameraButton}
+            {recordButton}
+          </React.Fragment>
         )}
-        {!recording && !shouldShowCountdown && (
-          <View style={styles.button}>{recordButton}</View>
-        )}
-        {shouldShowCountdown && (
-          <View style={styles.countdown}>
-            <Countdown
-              countdownTime={5}
-              countdownFinished={() => {
-                setShouldShowCountdown(false);
-                setRecording(true);
-              }}
-            />
-          </View>
-        )}
+        {shouldShowCountdown && countdown}
       </View>
     )
   );
