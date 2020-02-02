@@ -1,77 +1,58 @@
-/*
-    Placeholder screen to allow for creation of components directory
-    Will be either repurposed or deleted as development starts
-*/
+import React from 'react';
+import {StyleSheet, View, FlatList} from 'react-native';
+import {useSelector} from 'react-redux';
+import {isEmpty} from 'lodash';
 
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {getSubCategories, getCategoryContent} from './../redux/selectors';
 
-import Categories from './Categories';
-import {getCategory, getCategories} from '../utilities/categories.js';
+import CategoryCard from './CategoryCard';
+import ContentCard from './ContentCard';
 
-const HomeScreen = () => {
-  const [categoryId, setCategoryId] = useState(null);
-  const category = getCategory(categoryId);
-
-  const renderBackButton = (
-    <View style={styles.backButtonContainer}>
-      {category && (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setCategoryId(category.parent_id)}>
-          <Icon
-            name="angle-left"
-            size={20}
-            style={styles.backButtonIcon}
-            backgroundColor={null}
-            onPress={() => setCategoryId(category.parent_id)}
-          />
-          <Text style={styles.backButtonText}>{' Back'}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+const HomeScreen = ({navigation}) => {
+  const category = navigation.getParam('category');
+  const categoryId = category ? category.id : null;
+  const categoryContent = useSelector(state =>
+    getCategoryContent(state, categoryId),
   );
-
-  const renderTitle = (
-    <View style={styles.title}>
-      <Text style={styles.titleText}>
-        {categoryId ? category.category_name : 'TTKD Home'}
-      </Text>
-    </View>
+  const subCategories = useSelector(state =>
+    getSubCategories(state, categoryId),
   );
 
   return (
     <View>
-      {renderBackButton}
-      {renderTitle}
-      <Categories
-        categories={getCategories(categoryId)}
-        setCategoryId={setCategoryId}
+      <FlatList
+        data={subCategories}
+        keyExtractor={subCategory => `${subCategory.id}`}
+        renderItem={({item}) => (
+          <CategoryCard navigation={navigation} category={item} />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.listItemSeparator} />}
+      />
+      {!isEmpty(subCategories) && !isEmpty(categoryContent) && (
+        <View style={styles.listItemSeparator} />
+      )}
+      <FlatList
+        data={categoryContent}
+        keyExtractor={content => `${content.id}`}
+        renderItem={({item}) => (
+          <ContentCard navigation={navigation} content={item} />
+        )}
+        ItemSeparatorComponent={() => <View style={styles.listItemSeparator} />}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  backButtonContainer: {
-    paddingLeft: 8,
-    height: 20,
-  },
-  backButton: {
-    flexDirection: 'row',
-  },
-  backButtonText: {
-    fontSize: 16,
-  },
-  title: {
-    paddingHorizontal: 12,
+  listItemSeparator: {
     borderBottomWidth: 1,
-  },
-  titleText: {
-    fontSize: 32,
-    textAlign: 'center',
   },
 });
 
+HomeScreen.navigationOptions = ({navigation}) => {
+  const category = navigation.getParam('category') || null;
+  return {
+    title: category ? category.category_name : 'TTKD Home',
+  };
+};
 export default HomeScreen;

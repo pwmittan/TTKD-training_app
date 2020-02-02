@@ -2,6 +2,23 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!--React Native Camera Permissions-->
+
+	<key>NSCameraUsageDescription</key>
+	<string>TTKD would like to access the Camera</string>
+
+	<!-- Required with iOS 11 and higher: include this only if you are planning to use the camera roll -->
+	<!-- <key>NSPhotoLibraryAddUsageDescription</key>
+	<string>TTKD would like access to the Camera Roll</string> -->
+
+	<!-- Include this only if you are planning to use the camera roll -->
+	<!-- <key>NSPhotoLibraryUsageDescription</key>
+	<string>TTKD would like access to the Camera Roll</string> -->
+
+	<!-- Include this only if you are planning to use the microphone for video recording -->
+	<!-- <key>NSMicrophoneUsageDescription</key>
+	<string>TTKD would like access to the microphone</string> -->
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
