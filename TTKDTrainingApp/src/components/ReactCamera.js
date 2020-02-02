@@ -3,8 +3,7 @@ import {useDispatch} from 'react-redux';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
-import {HeaderBackButton} from 'react-navigation-stack';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Orientation from 'react-native-orientation-locker';
 
 import ContentVideo from './VideoWithControls/ContentVideo';
@@ -17,8 +16,8 @@ const ReactCamera = props => {
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
   const maxLength = navigation.getParam('maxLength');
-  const shouldCancelVideo = navigation.getParam('shouldCancelVideo');
 
+  const [shouldCancelVideo, setShouldCancelVideo] = useState(false);
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
   const [recording, setRecording] = useState(false);
   const [frontCamera, setFrontCamera] = useState(true);
@@ -164,11 +163,16 @@ const ReactCamera = props => {
             videoWidth={videoWidth}
           />
         </View>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setShouldCancelVideo(true)}>
+          <Icon name="md-arrow-back" size={24} color="rgb(255,255,255)" />
+        </TouchableOpacity>
         {!shouldShowCountdown && !recording && (
           <TouchableOpacity
             style={styles.swapCameraButton}
             onPress={() => setFrontCamera(!frontCamera)}>
-            <Icon name="refresh" size={24} color="rgb(255,255,255)" />
+            <Icon name="md-sync" size={24} color="rgb(255,255,255)" />
           </TouchableOpacity>
         )}
         {!recording && !shouldShowCountdown && (
@@ -190,16 +194,8 @@ const ReactCamera = props => {
   );
 };
 
-ReactCamera.navigationOptions = ({navigation}) => {
-  return {
-    title: 'Recording',
-    headerLeft: () => (
-      <HeaderBackButton
-        tintColor="white"
-        onPress={() => navigation.setParams({shouldCancelVideo: true})}
-      />
-    ),
-  };
+ReactCamera.navigationOptions = {
+  headerShown: false,
 };
 
 export default withNavigationFocus(ReactCamera);
@@ -243,8 +239,14 @@ const styles = StyleSheet.create({
   hideVideo: {
     opacity: 0,
   },
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+  },
   swapCameraButton: {
     position: 'absolute',
+    transform: [{rotate: '90deg'}],
     top: 10,
     right: 20,
   },
