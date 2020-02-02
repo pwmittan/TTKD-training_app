@@ -87,14 +87,18 @@ const setVideoUris = videoUris => {
 export const genCachedUri = contentId => {
   return (dispatch, getState) => {
     const {title, video_uri} = getContentFromId(getState(), contentId);
-    const filePath = `${RNFS.DocumentDirectoryPath}/${video_uri}`;
+    const filePath = `${RNFS.DocumentDirectoryPath}/${video_uri}`.replace(
+      / |%20/g,
+      '_',
+    );
+    const s3Url = `${BASE_S3_URI}/${title}/${video_uri}`.replace(/ /g, '%20');
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);
         dispatch(addCachedVideoPath({[contentId]: `file://${filePath}`}));
       } else {
         RNFS.downloadFile({
-          fromUrl: `${BASE_S3_URI}/${title}/${video_uri}`,
+          fromUrl: s3Url,
           toFile: filePath,
           background: true,
         })

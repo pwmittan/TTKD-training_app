@@ -3,6 +3,7 @@ import {View, Text, Button, StyleSheet} from 'react-native';
 
 import VideoWithControls from './VideoWithControls';
 import VideoThumbnail from './VideoThumbnail';
+import {SafeAreaView} from 'react-navigation';
 
 const Content = props => {
   const [videoLength, setVideoLength] = useState(0);
@@ -28,7 +29,9 @@ const Content = props => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      forceInset={{bottom: 'always', top: 'never'}}>
       {renderDesc}
       <VideoWithControls
         contentId={content.id}
@@ -36,7 +39,7 @@ const Content = props => {
       />
       {recordButton}
       <VideoThumbnail navigation={navigation} contentId={content.id} />
-    </View>
+    </SafeAreaView>
   );
 };
 
