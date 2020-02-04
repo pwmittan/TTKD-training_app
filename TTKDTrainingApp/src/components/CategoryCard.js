@@ -14,7 +14,7 @@ const CategoryCard = props => {
         })
       }>
       <View style={styles.categoryItem}>
-        <Text style={styles.categoryText}>{category.category_name}</Text>
+        <Text style={styles.categoryText}>{category.title}</Text>
         <Icon name="angle-right" size={24} />
       </View>
     </TouchableOpacity>

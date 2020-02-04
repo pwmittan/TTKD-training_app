@@ -4,7 +4,7 @@ import {
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
-  SET_VIDEO_URIS,
+  SET_VIDEO_PATHS,
   ADD_CACHED_VIDEO_PATH,
 } from './actionTypes';
 import {getContentFromId} from './selectors';
@@ -56,7 +56,7 @@ export const setHomeScreenData = () => {
 const presignVideoUris = content => {
   return dispatch => {
     const videoPaths = content.reduce((allVals, currVal) => {
-      return {...allVals, [currVal.id]: currVal.video_uri};
+      return {...allVals, [currVal.id]: currVal.video_path};
     }, {});
     const url = new URL(
       'https://g4o9el325j.execute-api.us-east-1.amazonaws.com/TestS3PresignUrl',
@@ -77,21 +77,21 @@ const presignVideoUris = content => {
   };
 };
 
-const setVideoUris = videoUris => {
+const setVideoUris = videoPaths => {
   return {
-    type: SET_VIDEO_URIS,
-    payload: videoUris,
+    type: SET_VIDEO_PATHS,
+    payload: videoPaths,
   };
 };
 
 export const genCachedUri = contentId => {
   return (dispatch, getState) => {
-    const {title, video_uri} = getContentFromId(getState(), contentId);
-    const filePath = `${RNFS.DocumentDirectoryPath}/${video_uri}`.replace(
+    const {title, video_path} = getContentFromId(getState(), contentId);
+    const filePath = `${RNFS.DocumentDirectoryPath}/${video_path}`.replace(
       / |%20/g,
       '_',
     );
-    const s3Url = `${BASE_S3_URI}/${title}/${video_uri}`.replace(/ /g, '%20');
+    const s3Url = `${BASE_S3_URI}/${title}/${video_path}`.replace(/ /g, '%20');
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);
