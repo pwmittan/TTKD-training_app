@@ -25,6 +25,7 @@ const Content = props => {
           maxLength: videoLength,
         });
       }}
+      color="#4392F1"
     />
   );
 
