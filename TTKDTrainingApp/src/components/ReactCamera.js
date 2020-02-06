@@ -15,7 +15,6 @@ const ReactCamera = props => {
 
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
-  const maxLength = navigation.getParam('maxLength');
 
   const [recording, setRecording] = useState(false);
   const [shouldKeepVideo, setShouldKeepVideo] = useState(true);
@@ -25,6 +24,7 @@ const ReactCamera = props => {
   const [frontCamera, setFrontCamera] = useState(true);
 
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [maxDuration, setMaxDuration] = useState(0);
   const [videoHeight, setVideoHeight] = useState(0);
   const [videoWidth, setVideoWidth] = useState(0);
 
@@ -81,7 +81,7 @@ const ReactCamera = props => {
         await cameraRef.current
           .recordAsync({
             mute: true,
-            maxDuration: maxLength,
+            maxDuration: maxDuration,
           })
           .then(video => {
             setRecordedVideo(video);
@@ -92,18 +92,22 @@ const ReactCamera = props => {
     } catch (e) {
       console.error('Recording Failed', e);
     }
-  }, [maxLength]);
+  }, [maxDuration]);
 
   const handleLoad = response => {
     const maxDim = 300;
-    const {height, width, orientation} = response.naturalSize;
+    const {duration, naturalSize} = response;
+    const {height, width, orientation} = naturalSize;
     const isPortrait = orientation === 'portrait';
+
     const calcHeight = isPortrait
       ? maxDim
       : Math.round((height * maxDim) / width);
     const calcWidth = isPortrait
       ? Math.round((width * maxDim) / height)
       : maxDim;
+
+    setMaxDuration(duration);
     setVideoHeight(calcHeight);
     setVideoWidth(calcWidth);
     setVideoLoaded(true);

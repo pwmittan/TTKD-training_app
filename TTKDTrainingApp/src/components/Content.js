@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 import VideoWithControls from './VideoWithControls';
 import VideoThumbnail from './VideoThumbnail';
 import {SafeAreaView} from 'react-navigation';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Content = props => {
-  const [videoLength, setVideoLength] = useState(0);
   const {navigation} = props;
   const content = navigation.getParam('content');
 
@@ -16,28 +16,12 @@ const Content = props => {
     </View>
   );
 
-  const recordButton = (
-    <Button
-      title="Start Recording"
-      onPress={() => {
-        navigation.navigate('ReactCamera', {
-          contentId: content.id,
-          maxLength: videoLength,
-        });
-      }}
-    />
-  );
-
   return (
     <SafeAreaView
       style={styles.container}
       forceInset={{bottom: 'always', top: 'never'}}>
       {renderDesc}
-      <VideoWithControls
-        contentId={content.id}
-        setVideoLength={setVideoLength}
-      />
-      {recordButton}
+      <VideoWithControls contentId={content.id} />
       <VideoThumbnail navigation={navigation} contentId={content.id} />
     </SafeAreaView>
   );
@@ -52,12 +36,41 @@ const styles = StyleSheet.create({
   descText: {
     fontSize: 14,
   },
+  headerRightContainer: {
+    flexDirection: 'row',
+  },
+  headerRightIcon: {
+    marginTop: 2,
+  },
+  headerRightText: {
+    marginHorizontal: 8,
+    color: 'rgb(255,255,255)',
+    fontSize: 18,
+  },
 });
 
 Content.navigationOptions = ({navigation}) => {
   const content = navigation.getParam('content');
   return {
     title: content.title,
+    headerRight: () => (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('ReactCamera', {
+            contentId: content.id,
+          });
+        }}>
+        <View style={styles.headerRightContainer}>
+          <Icon
+            name="md-videocam"
+            size={20}
+            color="rgb(255,255,255)"
+            style={styles.headerRightIcon}
+          />
+          <Text style={styles.headerRightText}>Record</Text>
+        </View>
+      </TouchableOpacity>
+    ),
   };
 };
 
