@@ -117,6 +117,7 @@ const VideoWithControls = props => {
             }}>
             {recordedVideo && (
               <Video
+                poster={recordedVideo.uri}
                 source={recordedVideo}
                 paused={paused}
                 rate={rate}
@@ -200,6 +201,7 @@ VideoWithControls.navigationOptions = ({navigation}) => {
         onPress={() => navigation.navigate('Content')}
       />
     ),
+    title: (navigation.getParam('recordedVideo') && 'Comparison') || 'Playback',
   };
 };
 

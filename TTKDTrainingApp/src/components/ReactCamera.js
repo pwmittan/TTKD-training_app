@@ -180,13 +180,7 @@ const ReactCamera = props => {
           //   buttonNegative: 'Cancel',
           // }}
         />
-        <View
-          style={{
-            ...styles.video,
-            ...(recording ? null : styles.hideVideo),
-            height: videoHeight,
-            width: videoWidth,
-          }}>
+        <View style={styles.video}>
           <ContentVideo
             contentId={contentId}
             paused={!recording}
@@ -249,9 +243,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-  },
-  hideVideo: {
-    opacity: 0,
   },
   backButton: {
     position: 'absolute',
