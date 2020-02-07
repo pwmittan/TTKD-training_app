@@ -32,6 +32,7 @@ const VideoWithControls = props => {
   const [duration, setDuration] = useState(0);
   const [rate, setRate] = useState(DEFAULT_SPEED);
   const [loading, setLoading] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
   const [videoHeight, setVideoHeight] = useState(0);
   const [videoRatio, setVideoRatio] = useState(16 / 9);
@@ -78,11 +79,13 @@ const VideoWithControls = props => {
     setVideoRatio(meta.naturalSize.width / meta.naturalSize.height);
 
     setLoading(false);
+    setShowControls(true);
     console.info('Finished loading');
   };
 
   const handlePlayPausePress = () => {
     progress >= 1 && Object.values(videoRefs).map(ref => ref.current.seek(0));
+    paused && setTimeout(() => setShowControls(false), 1500);
     setPaused(!paused);
   };
 
@@ -94,6 +97,7 @@ const VideoWithControls = props => {
   const handleEnd = () => {
     setPaused(true);
     setProgress(1);
+    setShowControls(true);
   };
 
   const recordedVideoRef = useRef();
@@ -109,7 +113,8 @@ const VideoWithControls = props => {
     <View style={styles.container}>
       {/* Videos */}
       <View style={styles.fullWidth}>
-        <TouchableWithoutFeedback onPress={handlePlayPausePress}>
+        <TouchableWithoutFeedback
+          onPress={() => setShowControls(!showControls)}>
           <View
             style={{
               ...styles.fullWidth,
@@ -142,16 +147,21 @@ const VideoWithControls = props => {
             />
           </View>
         </TouchableWithoutFeedback>
+        {showControls && (
+          <Controls
+            videoRefs={videoRefs}
+            paused={paused}
+            handlePlayPausePress={handlePlayPausePress}
+            duration={duration}
+            progress={progress}
+            rate={rate}
+            setRate={setRate}
+            maxWidth={
+              !isPortrait && recordedVideo ? '100%' : videoHeight * videoRatio
+            }
+          />
+        )}
       </View>
-      <Controls
-        videoRefs={videoRefs}
-        paused={paused}
-        handlePlayPausePress={handlePlayPausePress}
-        duration={duration}
-        progress={progress}
-        rate={rate}
-        setRate={setRate}
-      />
       <Steps
         videoRefs={videoRefs}
         contentId={contentId}
@@ -176,8 +186,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   fullWidth: {
     width: '100%',
