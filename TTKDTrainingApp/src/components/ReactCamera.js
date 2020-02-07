@@ -61,8 +61,11 @@ const ReactCamera = props => {
 
   useEffect(() => {
     isFocused && Orientation.lockToLandscape();
-    !isFocused && Orientation.lockToPortrait();
-    !isFocused && Orientation.unlockAllOrientations();
+
+    return () => {
+      Orientation.lockToPortrait();
+      Orientation.unlockAllOrientations();
+    };
   }, [isFocused]);
 
   const backButtonPress = () => {
