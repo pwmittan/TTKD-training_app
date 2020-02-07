@@ -1,5 +1,4 @@
 import React, {useState, useRef, useEffect} from 'react';
-
 import {
   StyleSheet,
   View,
@@ -13,11 +12,11 @@ import {HeaderBackButton} from 'react-navigation-stack';
 import Video from 'react-native-video';
 import Orientation from 'react-native-orientation-locker';
 
-import Controls from './Controls';
 import ContentVideo from './ContentVideo';
+import Controls from './Controls';
+import Steps from './Steps';
 
 import {DEFAULT_SPEED} from './constants';
-import Steps from './Steps';
 
 const VideoWithControls = props => {
   /////////// Props/Navigation access////////////////
@@ -34,7 +33,9 @@ const VideoWithControls = props => {
   const [rate, setRate] = useState(DEFAULT_SPEED);
   const [loading, setLoading] = useState(true);
 
-  const [width, setWidth] = useState(Dimensions.get('window').width);
+  const [videoHeight, setVideoHeight] = useState(0);
+  const [videoRatio, setVideoRatio] = useState(16 / 9);
+  const [isPortrait, setIsPortrait] = useState(true);
 
   ///////////////////// Effects /////////////////////
 
@@ -45,20 +46,36 @@ const VideoWithControls = props => {
   }, [props.isFocused]);
 
   useEffect(() => {
-    Orientation.getOrientation(orientation => {
-      if (orientation === 'PORTRAIT') {
-        const window = Dimensions.get('window');
-        setWidth(Math.min(window.height, window.width));
-      }
-    });
-  });
+    Orientation.addOrientationListener(onOrientationChange);
+    // Calling it because it doesn't happen on mount
+    Orientation.getOrientation(orientation => onOrientationChange(orientation));
+
+    return () => Orientation.removeOrientationListener(onOrientationChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onOrientationChange = orientation => {
+    const {width, height} = Dimensions.get('window');
+    const smallDim = Math.min(width, height);
+    const bigDim = Math.max(width, height);
+
+    if (orientation === 'PORTRAIT' || orientation === 'PORTRAIT-UPSIDEDOWN') {
+      setIsPortrait(true);
+      setVideoHeight(smallDim / videoRatio);
+    } else {
+      setIsPortrait(false);
+      const maxHeight = smallDim - 200;
+      setVideoHeight(
+        bigDim / videoRatio > maxHeight ? maxHeight : bigDim / videoRatio,
+      );
+    }
+  };
 
   ////////////////// Helper Methods ////////////////////
 
   const handleLoad = meta => {
-    // Should be removed when video_length is added to db schema
     setDuration(meta.duration);
-    props.setVideoLength && props.setVideoLength(meta.duration);
+    setVideoRatio(meta.naturalSize.width / meta.naturalSize.height);
 
     setLoading(false);
     console.info('Finished loading');
@@ -79,22 +96,25 @@ const VideoWithControls = props => {
     setProgress(1);
   };
 
-  const videoHeight = width * 0.5265;
-  const fullHeight = recordedVideo ? videoHeight * 2 : videoHeight;
-
   const recordedVideoRef = useRef();
   const videoRefs = {
     contentVideoRef: useRef(),
     ...(recordedVideo ? {recordedVideoRef: recordedVideoRef} : {}),
   };
 
+  const videoWidth = !isPortrait && recordedVideo ? '50%' : '100%';
+
   ///////////////////////////// Render Code //////////////////////////////
   return (
     <View style={styles.container}>
       {/* Videos */}
-      <View style={{height: fullHeight, ...styles.video}}>
+      <View style={styles.fullWidth}>
         <TouchableWithoutFeedback onPress={handlePlayPausePress}>
-          <View>
+          <View
+            style={{
+              ...styles.fullWidth,
+              ...(isPortrait ? styles.flexColumn : styles.flexRow),
+            }}>
             {recordedVideo && (
               <Video
                 source={recordedVideo}
@@ -102,7 +122,10 @@ const VideoWithControls = props => {
                 rate={rate}
                 resizeMode="contain"
                 ref={videoRefs.recordedVideoRef}
-                style={{height: videoHeight, ...styles.video}}
+                style={{
+                  height: videoHeight,
+                  width: videoWidth,
+                }}
               />
             )}
             <ContentVideo
@@ -113,6 +136,7 @@ const VideoWithControls = props => {
               handleProgress={handleProgress}
               handleEnd={handleEnd}
               videoHeight={videoHeight}
+              videoWidth={videoWidth}
               ref={videoRefs.contentVideoRef}
             />
           </View>
@@ -135,7 +159,11 @@ const VideoWithControls = props => {
       />
       {/* Loading Indicator */}
       <ActivityIndicator
-        style={{top: fullHeight / 2 - 16, ...styles.activityIndicator}}
+        style={{
+          top:
+            (isPortrait && recordedVideo ? videoHeight : videoHeight / 2) - 18,
+          ...styles.activityIndicator,
+        }}
         animating={loading}
         size="large"
       />
@@ -150,10 +178,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  video: {
+  fullWidth: {
     width: '100%',
   },
-
+  flexRow: {
+    flexDirection: 'row',
+  },
+  flexColumn: {
+    flexDirection: 'column',
+  },
   activityIndicator: {
     position: 'absolute',
   },
