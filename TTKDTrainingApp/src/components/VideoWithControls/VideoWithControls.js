@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
   },
   activityIndicator: {
     position: 'absolute',
+    alignSelf: 'center',
   },
 });
 
