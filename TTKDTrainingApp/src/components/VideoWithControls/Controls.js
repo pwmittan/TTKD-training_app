@@ -10,7 +10,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 const BUTTON_SLOP = {top: 10, left: 10, bottom: 10, right: 10};
 
 const secondsToTime = time => {
-  return `${Math.floor(time / 60)} : ${time % 60 < 10 ? '0' : ''} ${time % 60}`;
+  return `${Math.floor(time / 60)}:${time % 60 < 10 ? '0' : ''}${time % 60}`;
 };
 
 const Controls = props => {
