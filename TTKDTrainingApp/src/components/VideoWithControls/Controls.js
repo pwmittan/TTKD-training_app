@@ -1,13 +1,13 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 
-import {View, Text, StyleSheet} from 'react-native';
+import {Text, StyleSheet, Animated} from 'react-native';
 import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {RATES} from './constants';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const BUTTON_SLOP = {top: 10, left: 10, bottom: 10, right: 10};
+const BUTTON_SLOP = {top: 20, left: 20, bottom: 20, right: 20};
 
 const secondsToTime = time => {
   return `${Math.floor(time / 60)}:${time % 60 < 10 ? '0' : ''}${time % 60}`;
@@ -15,6 +15,7 @@ const secondsToTime = time => {
 
 const Controls = props => {
   const {
+    show,
     videoRefs,
     paused,
     handlePlayPausePress,
@@ -24,6 +25,8 @@ const Controls = props => {
     setRate,
     maxWidth,
   } = props;
+
+  const [animValue] = useState(new Animated.Value(0));
 
   const onSeek = data => {
     const seekTime = data * duration;
@@ -44,23 +47,32 @@ const Controls = props => {
     );
   };
 
+  useEffect(() => {
+    Animated.timing(animValue, {
+      toValue: show ? 1 : 0,
+      duration: 500,
+    }).start();
+  }, [show, animValue]);
+  console.log(animValue._value);
   return (
-    <View
+    <Animated.View
       style={{
+        opacity: animValue,
         ...styles.controls,
         maxWidth: maxWidth,
       }}>
       <TouchableOpacity onPress={handlePlayPausePress} hitSlop={BUTTON_SLOP}>
         <Icon
           name={!paused ? 'pause' : 'play'}
-          size={20}
+          size={24}
           color="rgb(255,255,255)"
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={onFastBackward} hitSlop={BUTTON_SLOP}>
-        <Icon name="fast-backward" size={20} color="rgb(255,255,255)" />
+        <Icon name="fast-backward" size={24} color="rgb(255,255,255)" />
       </TouchableOpacity>
       <Slider
+        disabled={!show}
         style={styles.controlsSlider}
         minimumValue={0}
         maximumValue={1}
@@ -73,9 +85,9 @@ const Controls = props => {
         {secondsToTime(Math.floor(progress * duration))}
       </Text>
       <TouchableOpacity onPress={onFastForward} hitSlop={BUTTON_SLOP}>
-        <Icon name="fast-forward" size={20} color="rgb(255,255,255)" />
+        <Icon name="fast-forward" size={24} color="rgb(255,255,255)" />
       </TouchableOpacity>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -90,7 +102,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
   },
   controlsSlider: {
     width: '60%',

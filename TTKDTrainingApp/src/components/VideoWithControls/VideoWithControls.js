@@ -147,20 +147,19 @@ const VideoWithControls = props => {
             />
           </View>
         </TouchableWithoutFeedback>
-        {showControls && (
-          <Controls
-            videoRefs={videoRefs}
-            paused={paused}
-            handlePlayPausePress={handlePlayPausePress}
-            duration={duration}
-            progress={progress}
-            rate={rate}
-            setRate={setRate}
-            maxWidth={
-              !isPortrait && recordedVideo ? '100%' : videoHeight * videoRatio
-            }
-          />
-        )}
+        <Controls
+          show={showControls}
+          videoRefs={videoRefs}
+          paused={paused}
+          handlePlayPausePress={handlePlayPausePress}
+          duration={duration}
+          progress={progress}
+          rate={rate}
+          setRate={setRate}
+          maxWidth={
+            !isPortrait && recordedVideo ? '100%' : videoHeight * videoRatio
+          }
+        />
       </View>
       <Steps
         videoRefs={videoRefs}
