@@ -65,7 +65,7 @@ const VideoWithControls = props => {
       setVideoHeight(smallDim / videoRatio);
     } else {
       setIsPortrait(false);
-      const maxHeight = smallDim - 200;
+      const maxHeight = smallDim - 185;
       setVideoHeight(
         bigDim / videoRatio > maxHeight ? maxHeight : bigDim / videoRatio,
       );
