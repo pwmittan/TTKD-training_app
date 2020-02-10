@@ -53,7 +53,7 @@ const Controls = props => {
       duration: 500,
     }).start();
   }, [show, animValue]);
-  console.log(animValue._value);
+
   return (
     <Animated.View
       style={{

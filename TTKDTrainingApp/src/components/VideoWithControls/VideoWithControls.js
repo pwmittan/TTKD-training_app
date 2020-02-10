@@ -85,7 +85,7 @@ const VideoWithControls = props => {
 
   const handlePlayPausePress = () => {
     progress >= 1 && Object.values(videoRefs).map(ref => ref.current.seek(0));
-    paused && setTimeout(() => setShowControls(false), 1500);
+    paused && setShowControls(false);
     setPaused(!paused);
   };
 
