@@ -47,11 +47,12 @@ const VideoWithControls = props => {
   }, [props.isFocused]);
 
   useEffect(() => {
-    Orientation.addOrientationListener(onOrientationChange);
+    Orientation.addDeviceOrientationListener(onOrientationChange);
     // Calling it because it doesn't happen on mount
     Orientation.getOrientation(orientation => onOrientationChange(orientation));
 
-    return () => Orientation.removeOrientationListener(onOrientationChange);
+    return () =>
+      Orientation.removeDeviceOrientationListener(onOrientationChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
