@@ -1,9 +1,10 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {useDispatch} from 'react-redux';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AweIcon from 'react-native-vector-icons/FontAwesome';
 import Orientation from 'react-native-orientation-locker';
 
 import ContentVideo from './VideoWithControls/ContentVideo';
@@ -119,7 +120,7 @@ const ReactCamera = props => {
 
   const backButton = (
     <TouchableOpacity style={styles.backButton} onPress={backButtonPress}>
-      <Icon name="md-arrow-back" size={24} color="rgb(255,255,255)" />
+      <Icon name="md-arrow-back" size={28} color="rgb(255,255,255)" />
     </TouchableOpacity>
   );
 
@@ -127,26 +128,30 @@ const ReactCamera = props => {
     <TouchableOpacity
       style={styles.swapCameraButton}
       onPress={() => setFrontCamera(!frontCamera)}>
-      <Icon name="md-sync" size={24} color="rgb(255,255,255)" />
+      <Icon name="md-sync" size={28} color="rgb(255,255,255)" />
     </TouchableOpacity>
   );
 
   const recordButton = (
-    <View style={styles.button}>
-      <TouchableOpacity
-        onPress={() => setShouldShowCountdown(true)}
-        disabled={!videoLoaded}
-        style={{
-          ...styles.capture,
-          ...(videoLoaded ? null : styles.disabledButton),
-        }}>
-        <Text style={styles.text}> RECORD </Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      onPress={() => setShouldShowCountdown(true)}
+      disabled={!videoLoaded}
+      style={{
+        ...styles.recordButtonAndCountdown,
+        ...(videoLoaded ? null : styles.disabledButton),
+      }}>
+      <AweIcon name="circle" size={60} color="#F3F3F3" />
+      <AweIcon
+        name="circle"
+        size={20}
+        color="red"
+        style={styles.innerRecordButton}
+      />
+    </TouchableOpacity>
   );
 
   const countdown = (
-    <View style={styles.countdown}>
+    <View style={styles.recordButtonAndCountdown}>
       <Countdown
         countdownTime={5}
         countdownFinished={() => {
@@ -162,7 +167,7 @@ const ReactCamera = props => {
       <View style={styles.container}>
         <RNCamera
           ref={cameraRef}
-          style={styles.preview}
+          style={styles.container}
           type={
             frontCamera
               ? RNCamera.Constants.Type.front
@@ -214,56 +219,33 @@ export default withNavigationFocus(ReactCamera);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'black',
-  },
-  preview: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  capture: {
-    flex: 0,
-    backgroundColor: '#fff',
-    borderRadius: 5,
-    padding: 15,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    margin: 20,
-  },
-  disabledButton: {
-    opacity: 0.3,
-  },
-  button: {
-    position: 'absolute',
-    bottom: 50,
-    alignSelf: 'center',
-    flex: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
   },
   video: {
     position: 'absolute',
     bottom: 0,
     right: 0,
   },
+  disabledButton: {
+    opacity: 0.3,
+  },
+  recordButtonAndCountdown: {
+    position: 'absolute',
+    bottom: 30,
+    alignSelf: 'center',
+  },
+  innerRecordButton: {
+    alignSelf: 'center',
+    bottom: '50%',
+  },
   backButton: {
     position: 'absolute',
-    top: 10,
-    left: 20,
+    padding: 16,
+    left: 12,
   },
   swapCameraButton: {
     position: 'absolute',
     transform: [{rotate: '90deg'}],
-    top: 10,
-    right: 20,
-  },
-  countdown: {
-    position: 'absolute',
-    bottom: 50,
-    alignSelf: 'center',
-  },
-  text: {
-    fontSize: 14,
+    padding: 16,
+    right: 12,
   },
 });
