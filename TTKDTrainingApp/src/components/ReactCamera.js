@@ -3,8 +3,8 @@ import {useDispatch} from 'react-redux';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {withNavigationFocus} from 'react-navigation';
-import {HeaderBackButton} from 'react-navigation-stack';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Orientation from 'react-native-orientation-locker';
 
 import ContentVideo from './VideoWithControls/ContentVideo';
 import Countdown from './Countdown';
@@ -15,15 +15,16 @@ const ReactCamera = props => {
 
   const {isFocused, navigation} = props;
   const contentId = navigation.getParam('contentId');
-  const maxLength = navigation.getParam('maxLength');
-  const shouldCancelVideo = navigation.getParam('shouldCancelVideo');
+
+  const [recording, setRecording] = useState(false);
+  const [shouldKeepVideo, setShouldKeepVideo] = useState(true);
+  const [recordedVideo, setRecordedVideo] = useState(null);
 
   const [shouldShowCountdown, setShouldShowCountdown] = useState(false);
-  const [recording, setRecording] = useState(false);
   const [frontCamera, setFrontCamera] = useState(true);
 
-  const [recordedVideo, setRecordedVideo] = useState(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [maxDuration, setMaxDuration] = useState(0);
   const [videoHeight, setVideoHeight] = useState(0);
   const [videoWidth, setVideoWidth] = useState(0);
 
@@ -36,25 +37,8 @@ const ReactCamera = props => {
   useEffect(() => {
     if (!prevRecording.current && recording === true) {
       startRecording();
-    }
-    prevRecording.current = recording;
-  }, [recording, startRecording]);
-
-  // Handles stopping video if back button is pressed
-  useEffect(() => {
-    if (recording) {
-      shouldCancelVideo &&
-        cameraRef.current &&
-        cameraRef.current.stopRecording();
-    } else {
-      shouldCancelVideo && navigation.goBack();
-    }
-  }, [shouldCancelVideo, navigation, recording]);
-
-  // Handles dispatching video and navigation once recording is stopped
-  useEffect(() => {
-    if (recordedVideo) {
-      if (!shouldCancelVideo) {
+    } else if (prevRecording.current && !recording) {
+      if (shouldKeepVideo) {
         dispatch(addRecordedVideo({...recordedVideo, contentId}));
         navigation.navigate('VideoWithControls', {
           recordedVideo: recordedVideo,
@@ -64,51 +48,113 @@ const ReactCamera = props => {
         navigation.goBack();
       }
     }
-  }, [shouldCancelVideo, recordedVideo, contentId, dispatch, navigation]);
+    prevRecording.current = recording;
+  }, [
+    contentId,
+    dispatch,
+    navigation,
+    recordedVideo,
+    recording,
+    shouldKeepVideo,
+    startRecording,
+  ]);
+
+  useEffect(() => {
+    isFocused && Orientation.lockToLandscape();
+
+    return () => {
+      Orientation.lockToPortrait();
+      Orientation.unlockAllOrientations();
+    };
+  }, [isFocused]);
+
+  const backButtonPress = () => {
+    if (recording) {
+      setShouldKeepVideo(false);
+      cameraRef.current && cameraRef.current.stopRecording();
+    } else {
+      navigation.goBack();
+    }
+  };
 
   const startRecording = useCallback(async () => {
     // default to mp4 for android as codec is not set
     try {
       if (cameraRef.current) {
-        const video = await cameraRef.current.recordAsync({
-          mute: true,
-          maxDuration: maxLength,
-        });
+        await cameraRef.current
+          .recordAsync({
+            mute: true,
+            maxDuration: maxDuration,
+          })
+          .then(video => {
+            setRecordedVideo(video);
+          });
 
         setRecording(false);
-        setRecordedVideo(video);
       }
     } catch (e) {
       console.error('Recording Failed', e);
     }
-  }, [maxLength]);
+  }, [maxDuration]);
 
   const handleLoad = response => {
     const maxDim = 300;
-    const {height, width, orientation} = response.naturalSize;
+    const {duration, naturalSize} = response;
+    const {height, width, orientation} = naturalSize;
     const isPortrait = orientation === 'portrait';
+
     const calcHeight = isPortrait
       ? maxDim
       : Math.round((height * maxDim) / width);
     const calcWidth = isPortrait
       ? Math.round((width * maxDim) / height)
       : maxDim;
+
+    setMaxDuration(duration);
     setVideoHeight(calcHeight);
     setVideoWidth(calcWidth);
     setVideoLoaded(true);
     console.info('Finished loading');
   };
 
-  const recordButton = (
-    <TouchableOpacity
-      onPress={() => setShouldShowCountdown(true)}
-      disabled={!videoLoaded}
-      style={{
-        ...styles.capture,
-        ...(videoLoaded ? null : styles.disabledButton),
-      }}>
-      <Text style={styles.text}> RECORD </Text>
+  const backButton = (
+    <TouchableOpacity style={styles.backButton} onPress={backButtonPress}>
+      <Icon name="md-arrow-back" size={24} color="rgb(255,255,255)" />
     </TouchableOpacity>
+  );
+
+  const swapCameraButton = (
+    <TouchableOpacity
+      style={styles.swapCameraButton}
+      onPress={() => setFrontCamera(!frontCamera)}>
+      <Icon name="md-sync" size={24} color="rgb(255,255,255)" />
+    </TouchableOpacity>
+  );
+
+  const recordButton = (
+    <View style={styles.button}>
+      <TouchableOpacity
+        onPress={() => setShouldShowCountdown(true)}
+        disabled={!videoLoaded}
+        style={{
+          ...styles.capture,
+          ...(videoLoaded ? null : styles.disabledButton),
+        }}>
+        <Text style={styles.text}> RECORD </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const countdown = (
+    <View style={styles.countdown}>
+      <Countdown
+        countdownTime={5}
+        countdownFinished={() => {
+          setShouldShowCountdown(false);
+          setRecording(true);
+        }}
+      />
+    </View>
   );
 
   return (
@@ -137,13 +183,7 @@ const ReactCamera = props => {
           //   buttonNegative: 'Cancel',
           // }}
         />
-        <View
-          style={{
-            ...styles.video,
-            ...(recording ? null : styles.hideVideo),
-            height: videoHeight,
-            width: videoWidth,
-          }}>
+        <View style={styles.video}>
           <ContentVideo
             contentId={contentId}
             paused={!recording}
@@ -152,42 +192,21 @@ const ReactCamera = props => {
             videoWidth={videoWidth}
           />
         </View>
+        {backButton}
         {!shouldShowCountdown && !recording && (
-          <TouchableOpacity
-            style={styles.swapCameraButton}
-            onPress={() => setFrontCamera(!frontCamera)}>
-            <Icon name="refresh" size={24} color="rgb(255,255,255)" />
-          </TouchableOpacity>
+          <React.Fragment>
+            {swapCameraButton}
+            {recordButton}
+          </React.Fragment>
         )}
-        {!recording && !shouldShowCountdown && (
-          <View style={styles.button}>{recordButton}</View>
-        )}
-        {shouldShowCountdown && (
-          <View style={styles.countdown}>
-            <Countdown
-              countdownTime={5}
-              countdownFinished={() => {
-                setShouldShowCountdown(false);
-                setRecording(true);
-              }}
-            />
-          </View>
-        )}
+        {shouldShowCountdown && countdown}
       </View>
     )
   );
 };
 
-ReactCamera.navigationOptions = ({navigation}) => {
-  return {
-    title: 'Recording',
-    headerLeft: () => (
-      <HeaderBackButton
-        tintColor="white"
-        onPress={() => navigation.setParams({shouldCancelVideo: true})}
-      />
-    ),
-  };
+ReactCamera.navigationOptions = {
+  headerShown: false,
 };
 
 export default withNavigationFocus(ReactCamera);
@@ -228,11 +247,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
-  hideVideo: {
-    opacity: 0,
+  backButton: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
   },
   swapCameraButton: {
     position: 'absolute',
+    transform: [{rotate: '90deg'}],
     top: 10,
     right: 20,
   },

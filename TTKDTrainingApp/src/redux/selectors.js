@@ -1,3 +1,5 @@
+import {BASE_S3_URI} from '../api/API';
+
 export const getReactCameraState = store => store.reactCamera;
 export const getHomeScreenState = store => store.homeScreen;
 
@@ -10,7 +12,6 @@ export const getRecordedVideosForContent = (store, contentId) =>
 const getAllCategories = store => getHomeScreenState(store).categories;
 const getAllContent = store => getHomeScreenState(store).content;
 const getAllSteps = store => getHomeScreenState(store).steps;
-const getAllVideoUris = store => getHomeScreenState(store).video_paths;
 const getAllCachedVideoPaths = store =>
   getHomeScreenState(store).cached_video_paths;
 
@@ -26,16 +27,13 @@ export const getCategoryContent = (store, categoryId) =>
 export const getContentFromId = (store, contentId) =>
   getAllContent(store).find(content => content.id === contentId);
 
-export const getContentOwnVideoUri = (store, contentId = -1) => {
-  const content = getContentFromId(store, contentId);
-  return content && content.video_path;
-};
-
-export const getContentVideoUri = (store, contentId) =>
-  getAllVideoUris(store)[contentId];
-
 export const getContentOwnCachedVideoPath = (store, contentId) =>
   getAllCachedVideoPaths(store)[contentId];
+
+export const getContentImageUri = (store, contentId) => {
+  const {title, thumbnail_path} = getContentFromId(store, contentId);
+  return `${BASE_S3_URI}/${title}/${thumbnail_path}`.replace(/ /g, '%20');
+};
 
 export const getContentOwnStepsSorted = (store, contentId) =>
   getAllSteps(store)

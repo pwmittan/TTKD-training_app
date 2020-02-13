@@ -2,7 +2,10 @@ import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import Video from 'react-native-video';
 
-import {getContentOwnCachedVideoPath} from '../../redux/selectors';
+import {
+  getContentOwnCachedVideoPath,
+  getContentImageUri,
+} from '../../redux/selectors';
 import {genCachedUri} from '../../redux/actions';
 
 const ContentVideo = React.forwardRef((props, ref) => {
@@ -18,6 +21,10 @@ const ContentVideo = React.forwardRef((props, ref) => {
     videoWidth,
   } = props;
 
+  const posterImageUri = useSelector(state =>
+    getContentImageUri(state, contentId),
+  );
+
   const cachedVideoPath = useSelector(state =>
     getContentOwnCachedVideoPath(state, contentId),
   );
@@ -30,6 +37,8 @@ const ContentVideo = React.forwardRef((props, ref) => {
   return (
     cachedVideoPath && (
       <Video
+        poster={posterImageUri}
+        posterResizeMode="contain"
         source={{
           uri: cachedVideoPath,
         }}
