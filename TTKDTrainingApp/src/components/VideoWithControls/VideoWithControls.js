@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native';
-import {withNavigationFocus} from 'react-navigation';
+import {withNavigationFocus, SafeAreaView} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
 import Video from 'react-native-video';
@@ -111,7 +111,7 @@ const VideoWithControls = props => {
 
   ///////////////////////////// Render Code //////////////////////////////
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Videos */}
       <View style={styles.fullWidth}>
         <TouchableWithoutFeedback
@@ -178,7 +178,7 @@ const VideoWithControls = props => {
         animating={loading}
         size="large"
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

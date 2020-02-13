@@ -33,19 +33,12 @@ const Controls = props => {
     Object.values(videoRefs).map(ref => ref.current.seek(seekTime));
   };
 
-  const onFastBackward = () => {
-    const curRateIndex = RATES.findIndex(listRate => listRate === rate);
-    setRate(curRateIndex <= 0 ? RATES[curRateIndex] : RATES[curRateIndex - 1]);
-  };
-
-  const onFastForward = () => {
-    const curRateIndex = RATES.findIndex(listRate => listRate === rate);
+  const handleRatePress = () =>
     setRate(
-      curRateIndex + 1 >= RATES.length
-        ? RATES[curRateIndex]
-        : RATES[curRateIndex + 1],
+      RATES[
+        (RATES.findIndex(listRate => listRate === rate) + 1) % RATES.length
+      ],
     );
-  };
 
   useEffect(() => {
     Animated.timing(animValue, {
@@ -68,9 +61,6 @@ const Controls = props => {
           color="rgb(255,255,255)"
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onFastBackward} hitSlop={BUTTON_SLOP}>
-        <Icon name="fast-backward" size={24} color="rgb(255,255,255)" />
-      </TouchableOpacity>
       <Slider
         disabled={!show}
         style={styles.controlsSlider}
@@ -84,8 +74,8 @@ const Controls = props => {
       <Text style={styles.controlsText}>
         {secondsToTime(Math.floor(progress * duration))}
       </Text>
-      <TouchableOpacity onPress={onFastForward} hitSlop={BUTTON_SLOP}>
-        <Icon name="fast-forward" size={24} color="rgb(255,255,255)" />
+      <TouchableOpacity onPress={handleRatePress} hitSlop={BUTTON_SLOP}>
+        <Text style={styles.controlsText}>{`${rate}x`}</Text>
       </TouchableOpacity>
     </Animated.View>
   );
@@ -105,9 +95,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   controlsSlider: {
-    width: '60%',
+    width: '70%',
   },
   controlsText: {
+    fontSize: 20,
     color: 'rgb(255,255,255)',
   },
 });
