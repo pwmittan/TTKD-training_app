@@ -140,10 +140,10 @@ const ReactCamera = props => {
         ...styles.recordButtonAndCountdown,
         ...(videoLoaded ? null : styles.disabledButton),
       }}>
-      <AweIcon name="circle" size={80} color="#D1D1D1" />
+      <AweIcon name="circle" size={60} color="#F3F3F3" />
       <AweIcon
         name="circle"
-        size={24}
+        size={20}
         color="red"
         style={styles.innerRecordButton}
       />
