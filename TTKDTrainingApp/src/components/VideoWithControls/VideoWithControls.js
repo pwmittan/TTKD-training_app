@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from 'react-native';
-import {withNavigationFocus} from 'react-navigation';
+import {withNavigationFocus, SafeAreaView} from 'react-navigation';
 import {HeaderBackButton} from 'react-navigation-stack';
 
 import Video from 'react-native-video';
@@ -47,11 +47,12 @@ const VideoWithControls = props => {
   }, [props.isFocused]);
 
   useEffect(() => {
-    Orientation.addOrientationListener(onOrientationChange);
+    Orientation.addDeviceOrientationListener(onOrientationChange);
     // Calling it because it doesn't happen on mount
     Orientation.getOrientation(orientation => onOrientationChange(orientation));
 
-    return () => Orientation.removeOrientationListener(onOrientationChange);
+    return () =>
+      Orientation.removeDeviceOrientationListener(onOrientationChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -110,7 +111,7 @@ const VideoWithControls = props => {
 
   ///////////////////////////// Render Code //////////////////////////////
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Videos */}
       <View style={styles.fullWidth}>
         <TouchableWithoutFeedback
@@ -177,7 +178,7 @@ const VideoWithControls = props => {
         animating={loading}
         size="large"
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
