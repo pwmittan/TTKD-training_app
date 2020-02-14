@@ -9,7 +9,7 @@ const CategoryCard = props => {
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.push('HomeScreen', {
+        navigation.push('Category', {
           category: category,
         })
       }>

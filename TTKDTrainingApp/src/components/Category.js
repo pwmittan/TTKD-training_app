@@ -8,7 +8,7 @@ import {getSubCategories, getCategoryContent} from './../redux/selectors';
 import CategoryCard from './CategoryCard';
 import ContentCard from './ContentCard';
 
-const HomeScreen = ({navigation}) => {
+const Category = ({navigation}) => {
   const category = navigation.getParam('category');
   const categoryId = category ? category.id : null;
   const categoryContent = useSelector(state =>
@@ -49,10 +49,10 @@ const styles = StyleSheet.create({
   },
 });
 
-HomeScreen.navigationOptions = ({navigation}) => {
+Category.navigationOptions = ({navigation}) => {
   const category = navigation.getParam('category') || null;
   return {
     title: category ? category.title : 'TTKD Home',
   };
 };
-export default HomeScreen;
+export default Category;

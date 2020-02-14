@@ -5,7 +5,7 @@ import {createStackNavigator} from 'react-navigation-stack';
 import {Provider, useDispatch} from 'react-redux';
 
 import store from './src/redux/store';
-import HomeScreen from './src/components/HomeScreen';
+import Category from './src/components/Category';
 import ReactCamera from './src/components/ReactCamera';
 import VideoWithControls from './src/components/VideoWithControls';
 import Content from './src/components/Content';
@@ -13,13 +13,13 @@ import {setHomeScreenData} from './src/redux/actions';
 
 const AppNavigator = createStackNavigator(
   {
-    HomeScreen: HomeScreen,
+    Category: Category,
     ReactCamera: ReactCamera,
     VideoWithControls: VideoWithControls,
     Content: Content,
   },
   {
-    initialRouteName: 'HomeScreen',
+    initialRouteName: 'Category',
     headerLayoutPreset: 'center',
     defaultNavigationOptions: {
       headerStyle: {
