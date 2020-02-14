@@ -14,7 +14,7 @@ const initialState = {
   cached_video_paths: {},
 };
 
-const homeScreen = (state = initialState, action) => {
+const app = (state = initialState, action) => {
   switch (action.type) {
     case SET_CATEGORIES: {
       const categories = action.payload;
@@ -57,4 +57,4 @@ const homeScreen = (state = initialState, action) => {
   }
 };
 
-export default homeScreen;
+export default app;

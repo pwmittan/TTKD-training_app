@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
 import reactCamera from './reactCamera';
-import homeScreen from './homeScreen';
+import app from './app';
 
-export default combineReducers({reactCamera, homeScreen});
+export default combineReducers({reactCamera, app});

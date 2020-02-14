@@ -9,7 +9,7 @@ import Category from './src/components/Category';
 import ReactCamera from './src/components/ReactCamera';
 import VideoWithControls from './src/components/VideoWithControls';
 import Content from './src/components/Content';
-import {setHomeScreenData} from './src/redux/actions';
+import {setAppData} from './src/redux/actions';
 
 const AppNavigator = createStackNavigator(
   {
@@ -37,7 +37,7 @@ const Navigation = createAppContainer(AppNavigator);
 const ConnectedApp = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(setHomeScreenData());
+    dispatch(setAppData());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

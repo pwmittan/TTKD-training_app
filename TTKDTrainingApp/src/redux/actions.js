@@ -36,7 +36,7 @@ export const setSteps = steps => {
   };
 };
 
-export const setHomeScreenData = () => {
+export const setAppData = () => {
   return dispatch => {
     fetchAppData()
       .then(res => res.json())

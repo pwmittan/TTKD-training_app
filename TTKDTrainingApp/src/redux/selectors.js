@@ -1,7 +1,7 @@
 import {BASE_S3_URI} from '../api/API';
 
 export const getReactCameraState = store => store.reactCamera;
-export const getHomeScreenState = store => store.homeScreen;
+export const getAppState = store => store.app;
 
 export const getAllRecordedVideos = store =>
   getReactCameraState(store).recordedVideos;
@@ -9,11 +9,10 @@ export const getAllRecordedVideos = store =>
 export const getRecordedVideosForContent = (store, contentId) =>
   getAllRecordedVideos(store).filter(video => video.contentId === contentId);
 
-const getAllCategories = store => getHomeScreenState(store).categories;
-const getAllContent = store => getHomeScreenState(store).content;
-const getAllSteps = store => getHomeScreenState(store).steps;
-const getAllCachedVideoPaths = store =>
-  getHomeScreenState(store).cached_video_paths;
+const getAllCategories = store => getAppState(store).categories;
+const getAllContent = store => getAppState(store).content;
+const getAllSteps = store => getAppState(store).steps;
+const getAllCachedVideoPaths = store => getAppState(store).cached_video_paths;
 
 export const getCategory = (store, categoryId) =>
   getAllCategories(store).find(category => category.id === categoryId);
