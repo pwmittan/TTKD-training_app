@@ -1,4 +1,5 @@
 import {
+  SET_STUDIO,
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
@@ -6,7 +7,10 @@ import {
   ADD_CACHED_VIDEO_PATH,
 } from '../actionTypes';
 
+import {setStudio} from '../../asyncStorage/asyncStorage';
+
 const initialState = {
+  studio: '',
   categories: [],
   content: [],
   steps: [],
@@ -16,6 +20,14 @@ const initialState = {
 
 const app = (state = initialState, action) => {
   switch (action.type) {
+    case SET_STUDIO: {
+      const studio = action.payload;
+      setStudio(studio);
+      return {
+        ...state,
+        studio: studio,
+      };
+    }
     case SET_CATEGORIES: {
       const categories = action.payload;
       return {
