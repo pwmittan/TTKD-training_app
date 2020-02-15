@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     width: '70%',
   },
   controlsText: {
+    paddingRight: 4,
     fontSize: 20,
     color: 'rgb(255,255,255)',
   },
