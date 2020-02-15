@@ -6,6 +6,7 @@ import {Provider} from 'react-redux';
 
 import store from './src/redux/store';
 import InitialScreen from './src/components/InitialScreen';
+import Studio from './src/components/Studio';
 import Category from './src/components/Category';
 import ReactCamera from './src/components/ReactCamera';
 import VideoWithControls from './src/components/VideoWithControls';
@@ -14,6 +15,7 @@ import Content from './src/components/Content';
 const AppNavigator = createStackNavigator(
   {
     InitialScreen: InitialScreen,
+    Studio: Studio,
     Category: Category,
     ReactCamera: ReactCamera,
     VideoWithControls: VideoWithControls,
