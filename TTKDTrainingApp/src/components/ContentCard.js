@@ -1,16 +1,16 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {BASE_S3_URI} from '../api/API';
+import {generateS3URL} from '../api/API';
+import {getStudio} from '../redux/selectors';
 
 const ContentCard = props => {
   const {navigation, content} = props;
+  const studio = useSelector(state => getStudio(state));
   const s3ImageUrl =
     content.thumbnail_path &&
-    `${BASE_S3_URI}/${content.title}/${content.thumbnail_path}`.replace(
-      / /g,
-      '%20',
-    );
+    generateS3URL(studio, content.title, content.thumbnail_path);
 
   return (
     <TouchableOpacity

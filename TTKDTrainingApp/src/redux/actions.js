@@ -1,19 +1,27 @@
 import RNFS from 'react-native-fs';
 import {
   ADD_RECORDED_VIDEO,
+  SET_STUDIO,
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
   SET_VIDEO_PATHS,
   ADD_CACHED_VIDEO_PATH,
 } from './actionTypes';
-import {getContentFromId} from './selectors';
-import {fetchAppData, BASE_S3_URI} from '../api/API';
+import {getContentFromId, getStudio} from './selectors';
+import {fetchAppData, generateS3URL} from '../api/API';
 
 export const addRecordedVideo = video => {
   return {
     type: ADD_RECORDED_VIDEO,
     payload: video,
+  };
+};
+
+export const setStudio = studio => {
+  return {
+    type: SET_STUDIO,
+    payload: studio,
   };
 };
 
@@ -36,15 +44,15 @@ export const setSteps = steps => {
   };
 };
 
-export const setAppData = () => {
+export const setAppData = studio => {
   return dispatch => {
-    fetchAppData()
+    dispatch(setStudio(studio));
+    fetchAppData(studio)
       .then(res => res.json())
       .then(data => {
         dispatch(setCategories(data.categories));
         dispatch(setContent(data.content));
         dispatch(setSteps(data.steps));
-        //dispatch(presignVideoUris(data.content));
       })
       .catch(console.info);
   };
@@ -86,12 +94,13 @@ const setVideoUris = videoPaths => {
 
 export const genCachedUri = contentId => {
   return (dispatch, getState) => {
+    const studio = getStudio(getState());
     const {title, video_path} = getContentFromId(getState(), contentId);
     const filePath = `${RNFS.DocumentDirectoryPath}/${video_path}`.replace(
       / |%20/g,
       '_',
     );
-    const s3Url = `${BASE_S3_URI}/${title}/${video_path}`.replace(/ /g, '%20');
+    const s3Url = generateS3URL(studio, title, video_path);
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);
