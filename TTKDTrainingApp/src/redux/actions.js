@@ -86,12 +86,12 @@ const setVideoUris = videoPaths => {
 
 export const genCachedUri = contentId => {
   return (dispatch, getState) => {
-    const {title, video_path} = getContentFromId(getState(), contentId);
+    const {video_path} = getContentFromId(getState(), contentId);
     const filePath = `${RNFS.DocumentDirectoryPath}/${video_path}`.replace(
       / |%20/g,
       '_',
     );
-    const s3Url = `${BASE_S3_URI}/${title}/${video_path}`.replace(/ /g, '%20');
+    const s3Url = `${BASE_S3_URI}/${video_path}`.replace(/ /g, '%20');
     RNFS.exists(filePath).then(exists => {
       if (exists) {
         console.info('File already exists, adding to Redux Store', filePath);

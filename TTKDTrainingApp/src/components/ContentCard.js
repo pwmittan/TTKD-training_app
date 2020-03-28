@@ -7,10 +7,7 @@ const ContentCard = props => {
   const {navigation, content} = props;
   const s3ImageUrl =
     content.thumbnail_path &&
-    `${BASE_S3_URI}/${content.title}/${content.thumbnail_path}`.replace(
-      / /g,
-      '%20',
-    );
+    `${BASE_S3_URI}/${content.thumbnail_path}`.replace(/ /g, '%20');
 
   return (
     <TouchableOpacity
