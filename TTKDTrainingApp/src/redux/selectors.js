@@ -32,7 +32,7 @@ export const getContentOwnCachedVideoPath = (store, contentId) =>
 
 export const getContentImageUri = (store, contentId) => {
   const {title, thumbnail_path} = getContentFromId(store, contentId);
-  return `${BASE_S3_URI}/${title}/${thumbnail_path}`.replace(/ /g, '%20');
+  return `${BASE_S3_URI}/${thumbnail_path}`.replace(/ /g, '%20');
 };
 
 export const getContentOwnStepsSorted = (store, contentId) =>
