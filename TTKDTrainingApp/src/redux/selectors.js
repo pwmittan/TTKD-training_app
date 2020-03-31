@@ -22,7 +22,9 @@ export const getSubCategories = (store, parentId) =>
   getAllCategories(store).filter(category => category.parent_id === parentId);
 
 export const getCategoryContent = (store, categoryId) =>
-  getAllContent(store).filter(content => content.category_id === categoryId);
+  getAllContent(store).filter(
+    content => content.is_released && content.category_id === categoryId,
+  );
 
 export const getContentFromId = (store, contentId) =>
   getAllContent(store).find(content => content.id === contentId);
@@ -31,7 +33,7 @@ export const getContentOwnCachedVideoPath = (store, contentId) =>
   getAllCachedVideoPaths(store)[contentId];
 
 export const getContentImageUri = (store, contentId) => {
-  const {title, thumbnail_path} = getContentFromId(store, contentId);
+  const {thumbnail_path} = getContentFromId(store, contentId);
   return `${BASE_S3_URI}/${thumbnail_path}`.replace(/ /g, '%20');
 };
 
