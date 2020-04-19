@@ -37,14 +37,15 @@ const Steps = props => {
         renderItem={({item, index}) => {
           const progressSeconds = Math.round(progress * duration);
           const isCurrentStep =
-            (!item.start_time || item.start_time <= progressSeconds) &&
-            (!item.end_time || item.end_time > progressSeconds);
+            progressSeconds - item.start_time >= 0 &&
+            (index + 1 >= steps.length ||
+              progressSeconds - steps[index + 1].start_time < 0);
+
           isCurrentStep &&
             index !== currentStepIndex &&
             setCurrentStepIndex(index);
           return (
-            <TouchableOpacity
-              onPress={() => handleStepPress(item.start_time || 0)}>
+            <TouchableOpacity onPress={() => handleStepPress(item.start_time)}>
               <View
                 style={[
                   styles.step,
