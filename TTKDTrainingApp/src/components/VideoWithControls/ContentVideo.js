@@ -19,6 +19,7 @@ const ContentVideo = React.forwardRef((props, ref) => {
     handleEnd,
     videoHeight,
     videoWidth,
+    isCameraView,
   } = props;
 
   const posterImageUri = useSelector(state =>
@@ -50,7 +51,11 @@ const ContentVideo = React.forwardRef((props, ref) => {
         onProgress={handleProgress}
         onEnd={handleEnd}
         ref={ref}
-        style={{height: videoHeight, width: videoWidth}}
+        style={{
+          height: videoHeight,
+          width: videoWidth,
+          transform: [{rotateY: isCameraView ? '180deg' : '0deg'}],
+        }}
       />
     )
   );

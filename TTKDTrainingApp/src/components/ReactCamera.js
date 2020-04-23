@@ -190,6 +190,7 @@ const ReactCamera = props => {
         />
         <View style={styles.video}>
           <ContentVideo
+            isCameraView={true}
             contentId={contentId}
             paused={!recording}
             handleLoad={handleLoad}
