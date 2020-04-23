@@ -2,7 +2,6 @@ import {
   SET_CATEGORIES,
   SET_CONTENT,
   SET_STEPS,
-  SET_VIDEO_PATHS,
   ADD_CACHED_VIDEO_PATH,
 } from '../actionTypes';
 
@@ -10,7 +9,6 @@ const initialState = {
   categories: [],
   content: [],
   steps: [],
-  video_paths: {},
   cached_video_paths: {},
 };
 
@@ -35,13 +33,6 @@ const homeScreen = (state = initialState, action) => {
       return {
         ...state,
         steps: steps,
-      };
-    }
-    case SET_VIDEO_PATHS: {
-      const video_paths = action.payload;
-      return {
-        ...state,
-        video_paths: video_paths,
       };
     }
     case ADD_CACHED_VIDEO_PATH: {

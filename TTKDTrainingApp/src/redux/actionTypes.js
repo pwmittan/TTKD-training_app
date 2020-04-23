@@ -4,5 +4,4 @@ export const SET_CATEGORIES = 'SET_CATEGORIES';
 export const SET_CONTENT = 'SET_CONTENT';
 export const SET_STEPS = 'SET_STEPS';
 
-export const SET_VIDEO_PATHS = 'SET_VIDEO_PATHS';
 export const ADD_CACHED_VIDEO_PATH = 'ADD_CACHED_VIDEO_PATH';
